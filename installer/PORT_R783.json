@@ -1,0 +1,228 @@
+{
+  "version": "R783-current-deployed-snapshot",
+  "sources": [
+    {
+      "partition": "system_a",
+      "path": "/mnt/nvme-op13/ace5-cos17-fuxi/work/delivery/ace5-032-platform-art-r369/system.raw.img",
+      "bytes": 7208882176,
+      "sha256": "216546a427bae1d7b257d1882b17a10dce65d66ba60eed3fc7c431ecee061d1e",
+      "manifest": "host/delivery-user032-platform-r369.json",
+      "exists": true,
+      "actual_bytes": 7208882176
+    },
+    {
+      "partition": "system_ext_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/delivery/ace5-032-cne-system-ext-r700/system_ext.img",
+      "bytes": 926793728,
+      "sha256": "ffbdc88e17eaa5dcc2bb4f955d5c6d86d7a47d50971edd30a1cd88ae1e196c23",
+      "manifest": "host/delivery-user032-cne-system-ext-r700.json",
+      "exists": true,
+      "actual_bytes": 926793728
+    },
+    {
+      "partition": "product_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/current-rom-return-lineage220-r130/images/product_a.img",
+      "bytes": 160296960,
+      "sha256": "2235cc4d34772dfe52a0a7d5f48f8f981cd8f0611325ff9ab035d04e65cd84c4",
+      "manifest": "host/delivery-user032-diagnostic-return-r273.json",
+      "exists": true,
+      "actual_bytes": 160296960
+    },
+    {
+      "partition": "vendor_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/delivery/ace5-032-qspm-registrar-r776/vendor.img",
+      "bytes": 768180224,
+      "sha256": "f2b85a8bfffc58c443711ae1579d4b0b1b718b7ba8f21b75fc443b14c4e1bd0b",
+      "manifest": "host/delivery-user032-qspm-registrar-r776.json",
+      "exists": true,
+      "actual_bytes": 768180224
+    },
+    {
+      "partition": "odm_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/delivery/ace5-032-qspm-registrar-r776/odm.img",
+      "bytes": 1458786304,
+      "sha256": "48043e0892296e27b3fa8e36ba6ce5c63cf37bd0fdd4eccabb90a8689003bfe2",
+      "manifest": "host/delivery-user032-qspm-registrar-r776.json",
+      "exists": true,
+      "actual_bytes": 1458786304
+    },
+    {
+      "partition": "vendor_dlkm_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/delivery/ace5-032-qspm-radio-r755/vendor_dlkm.img",
+      "bytes": 41377792,
+      "sha256": "6152bb0a22911cb2b6454eb0e76130a67186b6850b524da56f04c55d37c1d8d4",
+      "manifest": "host/delivery-user032-qspm-radio-r755.json",
+      "exists": true,
+      "actual_bytes": 41377792
+    },
+    {
+      "partition": "system_dlkm_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/current-rom-return-lineage220-r130/images/system_dlkm_a.img",
+      "bytes": 348160,
+      "sha256": "b4bf421946324ad6f1d0477716618103c5d7527ef688c8485480ef6552d3387f",
+      "manifest": "host/delivery-user032-diagnostic-return-r273.json",
+      "exists": true,
+      "actual_bytes": 348160
+    },
+    {
+      "partition": "mi_ext_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/current-rom-return-lineage220-r130/images/mi_ext_a.img",
+      "bytes": 1056768,
+      "sha256": "dc2aed06dd96859ed01264603ef42b590991934381f2eded30c8221ee54ed97f",
+      "manifest": "host/delivery-user032-diagnostic-return-r273.json",
+      "exists": true,
+      "actual_bytes": 1056768
+    },
+    {
+      "partition": "init_boot_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/current-rom-return-lineage220-r130/images/init_boot_a.img",
+      "bytes": 8388608,
+      "sha256": "1d9677f9a8ea3638d7c001cdc0af92434a8a92463502912cc4ce3f03b6ec9fd6",
+      "manifest": "host/delivery-user032-diagnostic-return-r273.json",
+      "exists": true,
+      "actual_bytes": 8388608
+    },
+    {
+      "partition": "dtbo_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/current-rom-return-lineage220-r130/images/dtbo_a.img",
+      "bytes": 25165824,
+      "sha256": "16b47318a6225d177c2db5266f7bb06ee654fe7f23ce38038a656812fb4ab8ed",
+      "manifest": "host/delivery-user032-diagnostic-return-r273.json",
+      "exists": true,
+      "actual_bytes": 25165824
+    },
+    {
+      "partition": "vendor_boot_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/delivery/ace5-032-hybridswap-r429/vendor_boot.img",
+      "bytes": 100663296,
+      "sha256": "ce15f4d4328534a5109ca0fecbe7b6efefcd8e05c4513f31be36bc4b70b148fa",
+      "manifest": "host/delivery-user032-hybridswap-r429.json",
+      "exists": true,
+      "actual_bytes": 100663296
+    },
+    {
+      "partition": "boot_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/delivery/ace5-032-hybridswap-r429/boot.img",
+      "bytes": 201326592,
+      "sha256": "54162007fec672aa42023776c5df33320e911dd2fbdd76e364b8e4caf96bd006",
+      "manifest": "host/delivery-user032-hybridswap-r429.json",
+      "exists": true,
+      "actual_bytes": 201326592
+    },
+    {
+      "partition": "vbmeta_system_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/current-rom-return-lineage220-r130/images/vbmeta_system_a.img",
+      "bytes": 131072,
+      "sha256": "039e948625d031dfedccb0b73333ee8ac89566033bab825abde607cc09925fee",
+      "manifest": "host/delivery-user032-diagnostic-return-r273.json",
+      "exists": true,
+      "actual_bytes": 131072
+    },
+    {
+      "partition": "vbmeta_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/current-rom-return-lineage220-r130/images/vbmeta_a.img",
+      "bytes": 131072,
+      "sha256": "8c4d8bc6ab2926ba17aa9aaffd6b4a1ecfa476874ba6b0d404061292dedc9be9",
+      "manifest": "host/delivery-user032-diagnostic-return-r273.json",
+      "exists": true,
+      "actual_bytes": 131072
+    },
+    {
+      "partition": "recovery_a",
+      "path": "/mnt/f/Ace5_COS17_FUXI_17/host/delivery/ace5-032-hybridswap-r429/recovery.img",
+      "bytes": 104857600,
+      "sha256": "0c7860637a693c9721cb8ff3921f6df6641acf3dfab6dc4c167cf6deeb87a5a0",
+      "manifest": "host/delivery-user032-hybridswap-r429.json",
+      "exists": true,
+      "actual_bytes": 104857600
+    }
+  ],
+  "logical_images": [
+    {
+      "partition": "system_a",
+      "bytes": 7208882176,
+      "sha256": "216546a427bae1d7b257d1882b17a10dce65d66ba60eed3fc7c431ecee061d1e",
+      "matched_current_deployed_image": true
+    },
+    {
+      "partition": "system_ext_a",
+      "bytes": 926793728,
+      "sha256": "ffbdc88e17eaa5dcc2bb4f955d5c6d86d7a47d50971edd30a1cd88ae1e196c23",
+      "matched_current_deployed_image": true
+    },
+    {
+      "partition": "product_a",
+      "bytes": 160296960,
+      "sha256": "2235cc4d34772dfe52a0a7d5f48f8f981cd8f0611325ff9ab035d04e65cd84c4",
+      "matched_current_deployed_image": true
+    },
+    {
+      "partition": "vendor_a",
+      "bytes": 768180224,
+      "sha256": "f2b85a8bfffc58c443711ae1579d4b0b1b718b7ba8f21b75fc443b14c4e1bd0b",
+      "matched_current_deployed_image": true
+    },
+    {
+      "partition": "odm_a",
+      "bytes": 1458786304,
+      "sha256": "48043e0892296e27b3fa8e36ba6ce5c63cf37bd0fdd4eccabb90a8689003bfe2",
+      "matched_current_deployed_image": true
+    },
+    {
+      "partition": "vendor_dlkm_a",
+      "bytes": 41377792,
+      "sha256": "6152bb0a22911cb2b6454eb0e76130a67186b6850b524da56f04c55d37c1d8d4",
+      "matched_current_deployed_image": true
+    },
+    {
+      "partition": "system_dlkm_a",
+      "bytes": 348160,
+      "sha256": "b4bf421946324ad6f1d0477716618103c5d7527ef688c8485480ef6552d3387f",
+      "matched_current_deployed_image": true
+    },
+    {
+      "partition": "mi_ext_a",
+      "bytes": 1056768,
+      "sha256": "dc2aed06dd96859ed01264603ef42b590991934381f2eded30c8221ee54ed97f",
+      "matched_current_deployed_image": true
+    }
+  ],
+  "original_installer": {
+    "path": "FUXI-INSTALLER-2.1.zip",
+    "bytes": 96888387,
+    "sha256": "cb197d0f3a01b583ce83477462a51f318649ac141eca65760e94ef9c87c56bff"
+  },
+  "installer_scripts_changed": true,
+  "APK_changed": false,
+  "phone_written": false,
+  "intended_base_firmware": "OS3.0.306.0.WMCMIXM",
+  "base_firmware_clean_boot_verified": false,
+  "physical_firmware_mismatch_count_R728": 18,
+  "physical_super_bytes": 11811160064,
+  "stock_super_bytes": 9663676416,
+  "clean_stock_boot_verified": false,
+  "universal_boot_guarantee": false,
+  "known_QSPM_same_domain_fix_R779_included": false,
+  "CNE_restricted_UID_data_configuration_included": false,
+  "public_release_ready": false,
+  "task_complete": false,
+  "extracted_installer_revision": "R787",
+  "windows_install_flow": {
+    "accepted_start_slots": [
+      "a",
+      "b"
+    ],
+    "target_slot": "a",
+    "activation": "after all image writes and userdata/metadata erases succeed, before reboot",
+    "activation_readback_required": true,
+    "images_for_slot_b_written": false,
+    "B_start_requires_super_bytes": 11811160064
+  },
+  "source_R783_zip_contains_this_script_update": false,
+  "restore_and_bash_start_slot_requirement_unchanged": "a",
+  "recovery_large_byte_guards": "awk; preserve minimum/alignment/userdata-bound checks",
+  "source_R783_zip_contains_R786_update": false,
+  "recovery_cache_unmounted_before_GPT": true,
+  "force_or_lazy_unmount": false,
+  "remaining_block_mount_guard_retained": true
+}

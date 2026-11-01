@@ -1,0 +1,14 @@
+Источники комплектных инструментов
+
+Google Android platform-tools 34.0.4 (Windows):
+https://dl.google.com/android/repository/platform-tools_r34.0.4-windows.zip
+
+ADB, fastboot, AdbWinApi.dll и AdbWinUsbApi.dll взяты из этого официального выпуска Google. Включены оригинальные NOTICE.txt и source.properties.
+
+Zstandard 1.5.7 (Windows x64):
+https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-v1.5.7-win64.zip
+https://github.com/facebook/zstd/blob/v1.5.7/LICENSE
+
+Лицензия Zstandard включена как bin/platform-tools-windows/LICENSE-zstd.txt.
+
+Образы прошивки и TWRP сохранены из переданного полного FUXI-INSTALLER.zip (R783). Происхождение и ограничения payload описаны в PORT_R783.json и README_PORT_PL.txt. При обновлении установщика их содержимое не изменялось.
