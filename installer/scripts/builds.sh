@@ -22,7 +22,7 @@ run_selected_build() {
     expected="$(sed -n 's/^\([0-9a-fA-F]\{64\}\)  \.\/BUILD_TYPE\.txt\r\{0,1\}$/\1/p' "$folder/SHA256SUMS.txt")"
     actual="$($tool "$marker" | awk '{print $1}')"
     [ -n "$expected" ] && [ "${expected,,}" = "$actual" ] || { printf 'BUILD_TYPE.txt checksum is missing, duplicated or wrong.\n' >&2; return 1; }
-    for name in flash.ps1 flash.sh restore-super.ps1 restore-super.sh scripts/common.ps1 scripts/common.sh \
+    for name in scripts/status.ps1 scripts/status.sh support-report.ps1 support-report.sh START.sh scripts/menu.sh scripts/language.sh scripts/process.ps1 check-base.ps1 check-base.sh flash.ps1 flash.sh restore-super.ps1 restore-super.sh scripts/common.ps1 scripts/common.sh \
         scripts/language.ps1 scripts/menu.ps1 scripts/builds.ps1 scripts/builds.sh scripts/prepare-super.sh; do
         cmp -s "$root/$name" "$folder/$name" || { printf 'Selected build needs the current installer scripts: %s\n' "$name" >&2; return 1; }
     done

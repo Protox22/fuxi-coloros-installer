@@ -11,10 +11,34 @@ EXPANDED_SUPER=0x2c0000000
 SERIAL=''
 SUPER_IMAGE=''
 LOCK_OWNED=0
+ALLOWED_BOOT_SLOTS='a'
+EXPECTED_BOOT_SLOT=''
+CHECKED_BOOT_SLOT=''
+SESSION_LOG=''
+COMPACT="${COMPACT:-0}"
+source "$SCRIPTS/language.sh"
+source "$SCRIPTS/status.sh"
+
+step() { printf '\n  > %s\n' "$(get_text "$@")"; }
+
+show_error_hint() {
+    local key=hintStopped
+    case "$*" in
+        *SHA-256*|*checksum*|*missing*file*|*firmware.conf*) key=hintFiles ;;
+        *installer.lock*) key=hintLock ;;
+        *space*|*GiB\ free*) key=hintSpace ;;
+        *slot*|*Slot*) key=hintSlot ;;
+        *missing*executable*|*Install*|*required\ tool*) key=hintTools ;;
+        *device*|*ADB*|*locked*|*permissions*|*Timed\ out*|*fastboot\ devices*) key=hintUsb ;;
+    esac
+    get_text "$key" >&2
+    record_event error "$key"
+}
 
 fail() {
-    printf 'ERROR: %s\n' "$*" >&2
-    [ -z "$SUPER_IMAGE" ] || printf 'Unpacked image retained for diagnosis: %s\n' "$SUPER_IMAGE" >&2
+    printf '\n%s: %s\n' "$(get_text error)" "$*" >&2
+    show_error_hint "$*"
+    [ -z "$SESSION_LOG" ] || get_text logPath "$SESSION_LOG" >&2
     exit 1
 }
 
@@ -31,26 +55,43 @@ hash_file() {
 confirm() {
     local answer
     while true; do
-        read -r -p "$1 [y/N]: " answer || return 1
+        printf '%s [y/N]: ' "$1"
+        read -r answer || return 1
+        answer="${answer#"${answer%%[![:space:]]*}"}"
+        answer="${answer%"${answer##*[![:space:]]}"}"
         case "$answer" in
             y|Y) return 0 ;;
             n|N|'') return 1 ;;
-            *) printf 'Enter y or n.\n' ;;
+            *) get_text invalidYesNo ;;
         esac
     done
 }
 
 verify_payload() {
-    local line expected relative actual seen=$'\n'
+    record_event phase.verify started
+    local line expected relative actual component prefix count=0 total seen=$'\n' canonical_seen=$'\n' canonical
     [ -f "$ROOT/SHA256SUMS.txt" ] || fail 'SHA256SUMS.txt is missing.'
+    total="$(awk 'END {print NR}' "$ROOT/SHA256SUMS.txt")"
     while IFS= read -r line || [ -n "$line" ]; do
         line="${line%$'\r'}"
         [[ "$line" =~ ^([0-9a-fA-F]{64})\ \ (\./)?([A-Za-z0-9_./-]+)$ ]] || fail "Invalid checksum entry: $line"
         expected="$(printf '%s' "${BASH_REMATCH[1]}" | tr '[:upper:]' '[:lower:]')"
         relative="${BASH_REMATCH[3]}"
-        case "/$relative/" in *'/../'*|*'/./'*|'//'*) fail "Unsafe checksum path: $relative" ;; esac
+        canonical="${relative,,}"
+        case "$relative" in /*|*/|*//*|.|..|./*|../*|*/./*|*/../*|*/.|*/..) fail "Unsafe checksum path: $relative" ;; esac
         [[ "$seen" != *$'\n'"$relative"$'\n'* ]] || fail "Duplicate checksum path: $relative"
+        [[ "$canonical_seen" != *$'\n'"$canonical"$'\n'* ]] || fail "Duplicate checksum path: $relative"
         seen+="$relative"$'\n'
+        canonical_seen+="$canonical"$'\n'
+        prefix="$ROOT"
+        IFS=/ read -r -a components <<< "$relative"
+        for component in "${components[@]}"; do
+            prefix="$prefix/$component"
+            [ ! -L "$prefix" ] || fail "Symlink in checksum path: $relative"
+        done
+        if [ "${DIAGNOSTICS_ONLY:-0}" = 1 ]; then
+            case "$relative" in images/*|tools/*|bin/*) continue ;; esac
+        fi
         if [ ! -f "$ROOT/$relative" ]; then
             if [ "${INSTALLER_ONLY:-0}" = 1 ] && [ "$relative" = images/super.img.zst ]; then
                 printf 'OMITTED  images/super.img.zst (installer-only check)\n'
@@ -58,11 +99,13 @@ verify_payload() {
             fi
             fail "Required release file is missing: $relative"
         fi
+        count=$((count + 1))
+        [ "$COMPACT" = 0 ] || get_text checkingFile "$count" "$total" "$relative"
         actual="$(hash_file "$ROOT/$relative")" || fail "Cannot hash: $relative"
         [ "$actual" = "$expected" ] || fail "SHA-256 mismatch: $relative"
-        printf 'GOOD  %s\n' "$relative"
+        [ "$COMPACT" = 1 ] || printf 'GOOD  %s\n' "$relative"
     done < "$ROOT/SHA256SUMS.txt"
-    for relative in FLASH.bat scripts/menu.ps1 scripts/language.ps1 check-base.ps1 flash.ps1 flash.sh restore-super.ps1 restore-super.sh \
+    for relative in scripts/status.ps1 scripts/status.sh support-report.ps1 support-report.sh FLASH.bat START.sh QUICK_START.txt scripts/menu.ps1 scripts/menu.sh scripts/language.ps1 scripts/language.sh scripts/process.ps1 check-base.ps1 check-base.sh flash.ps1 flash.sh restore-super.ps1 restore-super.sh \
         scripts/common.ps1 scripts/common.sh scripts/builds.ps1 scripts/builds.sh scripts/prepare-super.sh images/recovery.img images/super.img.zst \
         images/vbmeta.img images/vbmeta_system.img tools/TWRP-FUXI-A17.img bin/platform-tools-windows/adb.exe \
         bin/platform-tools-windows/fastboot.exe bin/platform-tools-windows/zstd.exe bin/platform-tools-windows/AdbWinApi.dll \
@@ -117,8 +160,14 @@ read_firmware_profile() {
 }
 
 finish_session() {
-    local code=$?
+    local code=${1:-$?}
     trap - EXIT
+    case "$code" in 0) record_event result finished ;; 2) record_event result cancelled ;; *) show_failure_state ;; esac
+    if [ -n "$SUPER_IMAGE" ]; then
+        # Only the exact file/directory created by mktemp in this process.
+        if rm -f -- "$SUPER_IMAGE" && rmdir -- "$(dirname "$SUPER_IMAGE")"; then get_text tempRemoved; fi
+    fi
+    [ "$code" = 0 ] || [ -z "$SESSION_LOG" ] || get_text logPath "$SESSION_LOG" >&2
     if [ "$LOCK_OWNED" = 1 ]; then
         rm -f "$ROOT/.installer.lock" || printf 'Could not remove .installer.lock; see README_RU.txt.\n' >&2
     fi
@@ -133,9 +182,11 @@ start_session() {
     trap 'exit 130' INT
     trap 'exit 143' TERM
     mkdir -p "$ROOT/logs" || fail 'Cannot create logs directory.'
-    local log="$ROOT/logs/$(date +%Y%m%d-%H%M%S)-$$-$1.log"
-    exec > >(tee -a "$log") 2>&1
-    printf 'Session log: %s\n' "$log"
+    SESSION_LOG="$ROOT/logs/$(date +%Y%m%d-%H%M%S)-$$-$1.log"
+    EVENT_FILE="$SESSION_LOG.events.tsv"
+    record_event "session.$1" started
+    exec > >(tee -a "$SESSION_LOG") 2>&1
+    get_text logPath "$SESSION_LOG"
 }
 
 check_extra_images() {
@@ -165,6 +216,7 @@ check_required_images() {
 }
 
 find_tools() {
+    command -v timeout >/dev/null 2>&1 || fail 'The required tool timeout (GNU coreutils) is missing.'
     FASTBOOT="${FASTBOOT:-$(command -v fastboot || true)}"
     ADB="${ADB:-$(command -v adb || true)}"
     [ -n "$FASTBOOT" ] && [ -x "$FASTBOOT" ] || fail 'Install Android platform-tools; fastboot is missing or not executable.'
@@ -175,12 +227,25 @@ find_tools() {
     fi
 }
 
-invoke_fastboot() { "$FASTBOOT" -s "$SERIAL" "$@" || fail "fastboot failed: $*"; }
-invoke_adb() { "$ADB" -s "$SERIAL" "$@" || fail "adb failed: $*"; }
+invoke_fastboot() {
+    local action
+    action="$(mutation_action fastboot "$@")"
+    [ -z "$action" ] || record_event "$action" started
+    printf '> fastboot %s\n' "$*"
+    timeout --foreground --kill-after=5 1200 "$FASTBOOT" -s "$SERIAL" "$@" || fail "fastboot failed or timed out: $*"
+    [ -z "$action" ] || record_event "$action" done
+}
+invoke_adb() {
+    local action
+    action="$(mutation_action adb "$@")"
+    [ -z "$action" ] || record_event "$action" started
+    timeout --foreground --kill-after=5 300 "$ADB" -s "$SERIAL" "$@" || fail "adb failed or timed out: $*"
+    [ -z "$action" ] || record_event "$action" done
+}
 
 get_fastboot_var() {
     local output value
-    output="$("$FASTBOOT" -s "$SERIAL" getvar "$1" 2>&1)" || fail "fastboot getvar $1 failed: $output"
+    output="$(timeout --foreground --kill-after=5 15 "$FASTBOOT" -s "$SERIAL" getvar "$1" 2>&1)" || fail "fastboot getvar $1 failed or timed out: $output"
     value="$(printf '%s\n' "$output" | tr -d '\r' | awk -v key="$1:" '
         { sub(/^\(bootloader\)[[:space:]]*/, ""); sub(/^bootloader:[[:space:]]*/, "") }
         index($0, key) == 1 {
@@ -204,7 +269,7 @@ get_super_size() {
 
 get_fastboot_devices() {
     local output
-    output="$("$FASTBOOT" devices 2>&1)" || fail "fastboot devices failed: $output"
+    output="$(timeout --foreground --kill-after=5 15 "$FASTBOOT" devices 2>&1)" || fail "fastboot devices failed: $output"
     printf '%s\n' "$output" | tr -d '\r' | awk '
         NF == 0 { next }
         NF == 2 && $2 == "fastboot" { print $1; next }
@@ -213,9 +278,9 @@ get_fastboot_devices() {
 }
 
 wait_fastboot() {
-    local devs count i
+    local devs count deadline=$((SECONDS + 120))
     printf 'Waiting for the selected device in bootloader fastboot...\n'
-    for ((i=0; i<120; i++)); do
+    while [ "$SECONDS" -lt "$deadline" ]; do
         devs="$(get_fastboot_devices)" || return 1
         count="$(printf '%s\n' "$devs" | awk 'NF {n++} END {print n+0}')"
         [ "$count" -le 1 ] || fail 'Disconnect other fastboot devices.'
@@ -226,10 +291,10 @@ wait_fastboot() {
 }
 
 wait_adb() {
-    local state i
+    local state deadline=$((SECONDS + 180))
     printf 'Waiting for the selected device in TWRP recovery...\n'
-    for ((i=0; i<180; i++)); do
-        state="$("$ADB" -s "$SERIAL" get-state 2>/dev/null | tr -d '\r\n')" || state=''
+    while [ "$SECONDS" -lt "$deadline" ]; do
+        state="$(timeout --foreground --kill-after=5 5 "$ADB" -s "$SERIAL" get-state 2>/dev/null | tr -d '\r\n')" || state=''
         if [ "$state" = device ] || [ "$state" = recovery ]; then return 0; fi
         sleep 1
     done
@@ -241,7 +306,10 @@ check_bootloader() {
     product="$(get_fastboot_var product)" || return 1
     [ "$product" = fuxi ] || fail "Connected device is not Xiaomi 13 fuxi: $product"
     slot="$(get_fastboot_var current-slot)" || return 1
-    [ "${slot#_}" = a ] || fail 'Slot A must already be active. Select the correct starting firmware and slot manually.'
+    slot="${slot#_}"
+    case " $ALLOWED_BOOT_SLOTS " in *" $slot "*) ;; *) fail "Unsupported active slot '$slot'. Allowed: $ALLOWED_BOOT_SLOTS" ;; esac
+    [ -z "$EXPECTED_BOOT_SLOT" ] || [ "$slot" = "$EXPECTED_BOOT_SLOT" ] || fail "Active slot changed unexpectedly: expected $EXPECTED_BOOT_SLOT, got $slot."
+    CHECKED_BOOT_SLOT="$slot"
     unlocked="$(get_fastboot_var unlocked)" || return 1
     [ "$unlocked" = yes ] || fail 'The bootloader is locked.'
     userspace="$(get_fastboot_var is-userspace)" || return 1
@@ -249,11 +317,11 @@ check_bootloader() {
 }
 
 connect_device() {
+    record_event phase.device started
     local fb adb_output adb_devices fb_count adb_count state product
-    "$ADB" start-server >/dev/null 2>&1 || fail 'adb start-server failed.'
+    timeout --foreground --kill-after=5 15 "$ADB" start-server >/dev/null 2>&1 || fail 'adb start-server failed.'
     fb="$(get_fastboot_devices)" || return 1
-    adb_output="$("$ADB" devices 2>&1)" || fail 'adb devices failed.'
-    adb_devices="$(printf '%s\n' "$adb_output" | tr -d '\r' | awk '$2 ~ /^(device|recovery|offline|unauthorized|sideload)$/ {print $1, $2}')"
+    adb_devices="$(get_adb_devices)" || return 1
     fb_count="$(printf '%s\n' "$fb" | awk 'NF {n++} END {print n+0}')"
     adb_count="$(printf '%s\n' "$adb_devices" | awk 'NF {n++} END {print n+0}')"
     [ "$((fb_count + adb_count))" -eq 1 ] || fail 'Connect exactly one device, in bootloader fastboot or authorized ADB.'
@@ -268,6 +336,16 @@ connect_device() {
         SERIAL="$fb"
     fi
     check_bootloader
+}
+
+get_adb_devices() {
+    local output
+    output="$(timeout --foreground --kill-after=5 15 "$ADB" devices 2>&1)" || fail "adb devices failed: $output"
+    printf '%s\n' "$output" | tr -d '\r' | awk '
+        /^List of devices attached[[:space:]]*$/ || /^\* daemon/ || NF == 0 { next }
+        NF == 2 && $2 ~ /^(device|recovery|offline|unauthorized|sideload)$/ {print $1, $2; next}
+        { exit 1 }
+    ' || fail 'Unexpected adb devices output (check USB permissions).'
 }
 
 start_resize_recovery() {
@@ -293,7 +371,7 @@ start_resize_recovery() {
     [ -s "$backup" ] || fail 'The GPT backup was not saved on the computer.'
     [ "$(hash_file "$backup")" = "$BACKUP_HASH" ] || fail 'The computer GPT backup does not match the recovery backup.'
     printf '%s\n' "$BACKUP_HASH" > "$backup.sha256" || fail 'Cannot save the backup checksum.'
-    printf 'Verified GPT backup saved: %s\n' "$backup"
+    get_text backupPath "$backup"
 }
 
 resize_super() {

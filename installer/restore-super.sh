@@ -4,34 +4,47 @@ source "$(cd "$(dirname "$0")" && pwd)/scripts/common.sh"
 
 main() {
     INSTALLER_ONLY=0
-    if [ "$#" -eq 2 ] && [ "$1" = --verify-only ] && [ "$2" = --installer-only ]; then INSTALLER_ONLY=1
-    else [ "$#" -eq 0 ] || { [ "$#" -eq 1 ] && [ "$1" = --verify-only ]; } || fail 'Usage: bash restore-super.sh [--verify-only [--installer-only]]'; fi
+    local verify_only=0
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            --verify-only) verify_only=1 ;;
+            --installer-only) INSTALLER_ONLY=1 ;;
+            --language) shift; LANGUAGE="${1:-}"; case "$LANGUAGE" in ru|en|pl) ;; *) fail 'Use ru, en or pl.' ;; esac ;;
+            *) fail 'Usage: bash restore-super.sh [--verify-only [--installer-only]] [--language ru|en|pl]' ;;
+        esac
+        shift
+    done
+    [ "$INSTALLER_ONLY" = 0 ] || [ "$verify_only" = 1 ] || fail '--installer-only requires --verify-only.'
     start_session restore
     # Restoration does not read or flash super.img.zst. Still verify it if present.
-    if [ "$#" -eq 0 ]; then INSTALLER_ONLY=1; fi
+    if [ "$verify_only" = 0 ]; then INSTALLER_ONLY=1; fi
     verify_payload
-    if [ "$#" -gt 0 ]; then printf 'Payload verification completed. No device commands were run.\n'; return; fi
+    if [ "$verify_only" = 1 ]; then
+        if [ -f "$IMAGES/super.img.zst" ]; then get_text verified; else get_text partialVerified; fi
+        return
+    fi
     find_tools
-    printf 'Xiaomi 13 fuxi: restore the stock 9 GiB super partition boundary.\n'
-    printf 'This only restores GPT geometry. It does not install stock firmware.\n'
+    get_text restoreTitle
+    get_text connectHelp
     connect_device
     local super_size confirmation
     super_size="$(get_super_size)"
     if [ "$super_size" = "$STOCK_SUPER" ]; then
-        printf 'Super is already 9 GiB. No partition writes or erases were performed.\n'
+        get_text alreadyStock
         return
     fi
     [ "$super_size" = "$EXPANDED_SUPER" ] || fail "Unsupported physical super size: $super_size"
     check_required_images
-    printf 'Userdata will be erased. The current ROM will not be bootable after shrinking super.\n'
-    printf 'Keep the bootloader unlocked. Prepare the correct official fuxi fastboot ROM before continuing.\n'
-    confirm 'Restore stock super size and erase data?' || fail 'Cancelled before flashing.'
+    get_text eraseCurrent
+    get_text prepareStock
+    confirm "$(get_text confirmRestore)" || { get_text cancelled; return 2; }
     start_resize_recovery
-    confirm 'Verified GPT backup saved; recovery/AVB already written. Restore the stock GPT boundary?' || fail 'Cancelled before changing GPT. Recovery/AVB have already been written; the device remains in TWRP.'
+    confirm "$(get_text confirmShrink)" || fail 'Cancelled before changing GPT. Recovery/AVB have already been written; the device remains in TWRP.'
     resize_super restore
     invoke_fastboot flash recovery_a "$IMAGES/recovery.img"
     invoke_fastboot erase userdata
     invoke_fastboot erase metadata
-    printf '9 GiB super boundary verified. Device remains in fastboot. Flash the correct official fuxi ROM before booting Android.\n'
+    get_text restoreDone
+    get_text installOfficial
 }
 main "$@"

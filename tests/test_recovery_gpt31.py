@@ -27,6 +27,7 @@ for old,new in {'DISK=/dev/block/sda':'DISK="$FUXI_GPT_DISK"',
     script=script.replace(old,new)
 (WORK/'script.sh').write_text(script,encoding='ascii',newline='\n')
 (WORK/'sgdisk').write_text(f'#!/usr/bin/env bash\nexec "{Path(sys.executable).as_posix()}" "{(BASE/"mock_gpt.py").as_posix()}" "$@"\n',encoding='utf-8',newline='\n')
+(WORK/'sgdisk').chmod(0o755)
 (WORK/'runner.sh').write_text('''#!/usr/bin/env bash
 set -eu
 function [() {

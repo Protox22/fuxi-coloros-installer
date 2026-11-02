@@ -1,4 +1,22 @@
-# Проверка — 02.11.2026
+# Проверка — 03.11.2026
+
+## Текущий выпуск 2.6.0
+
+Успешно выполнены **455 тестов/сценариев**: Windows PowerShell 5.1, PowerShell 7, Git Bash, payload и упаковка. Включены быстрая диагностика, статусы частичной записи, прерывание PowerShell, отбор/фильтрация ZIP и очистка после ошибки. Подробности: [REFACTOR_2_6.md](REFACTOR_2_6.md), [TEST_RESULTS_2_6.json](TEST_RESULTS_2_6.json).
+
+Настоящий PKG110 прошёл полный VerifyOnly Windows/Bash и потоковую проверку zstd/sparse/LP; SHA-256 распакованного sparse совпадает с профилем. Архивы FULL/INSTALLER 2.6.0 проверены по CRC и SHA-256 каждого файла. Доказательства: releases/verification-2.6.0.json и releases/FUXI-INSTALLER-2.6.0-build.json.
+
+Подтверждённого списка совместимых обновлений пока нет: интерфейс показывает UNKNOWN. Нативный Linux, USB/udev, реальная прошивка и загрузка Android не проверялись. В локальных Bash-тестах ZIP создаёт тестовый backend; Linux zip предстоит проверить на нативном стенде. Workflow Windows/Ubuntu удалённо не запускался.
+
+## Выпуск 2.5.0
+
+Успешно выполнены **389 тестов/сценариев** Windows PowerShell 5.1, PowerShell 7, Git Bash, проверки payload и упаковки. Подробности и границы результата: [REFACTOR_2_5.md](REFACTOR_2_5.md); машинная сводка: [TEST_RESULTS_2_5.json](TEST_RESULTS_2_5.json).
+
+Полный настоящий PKG110 прошёл VerifyOnly в Windows и Bash. Потоковая проверка всего zstd/sparse/LP и заголовков реальных образов успешна: распакованный размер 10362740588 байт, SHA-256 `a13201d9b12eed8da49bbe34f28b9c76da65592e6c1a8d64703796137bebd3fe`. Отчёт: `releases/verification-2.5.0.json`.
+
+Native Linux/USB, реальная запись телефону и запуск Android в этом рефакторинге не проверялись. Добавленный workflow Windows/Ubuntu не запускался удалённо.
+
+## Исторические проверки 2.4.1
 
 Оболочка 2.4.1 объединяет профиль PKG110, recovery-пути, обе геометрии GPT, y/n, выбор будущих сборок и обновление без стирания.
 

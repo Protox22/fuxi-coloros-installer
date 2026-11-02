@@ -1,0 +1,3532 @@
+{
+  "date": "2026-11-03",
+  "timezone": "Asia/Omsk",
+  "version": "2.6.0",
+  "total": 455,
+  "passed": true,
+  "real_device": false,
+  "native_linux": false,
+  "environment": [
+    "Windows PowerShell 5.1",
+    "PowerShell 7",
+    "Git Bash on Windows"
+  ],
+  "notes": [
+    "Bash ZIP export on Windows uses a test ZIP backend. Native Linux zip is configured in CI but was not run here.",
+    "The payload group counts unittest methods with additional subcases. No actual phone or block devices are used."
+  ],
+  "groups": [
+    {
+      "group": "hosts",
+      "count": 132,
+      "passed": true,
+      "seconds": 624.14,
+      "evidence": "tests/.work/suite-20261102-191017/hosts.log",
+      "results": [
+        {
+          "host": "windows",
+          "case": "clean-b-9g-refused",
+          "ok": true,
+          "exit": 1,
+          "calls": 8,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "clean-a",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "clean-b",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "update",
+          "ok": true,
+          "exit": 0,
+          "calls": 34,
+          "writes": 8,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "update-b-refused",
+          "ok": true,
+          "exit": 1,
+          "calls": 5,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "clean-9g",
+          "ok": true,
+          "exit": 0,
+          "calls": 64,
+          "writes": 14,
+          "gpt": 1
+        },
+        {
+          "host": "windows",
+          "case": "update-9g-refused",
+          "ok": true,
+          "exit": 1,
+          "calls": 8,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "cancel-2",
+          "ok": true,
+          "exit": 2,
+          "calls": 15,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "cancel-1",
+          "ok": true,
+          "exit": 2,
+          "calls": 15,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "cancel-0",
+          "ok": true,
+          "exit": 2,
+          "calls": 15,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "restore-noop",
+          "ok": true,
+          "exit": 0,
+          "calls": 8,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "invalid-then-confirm",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "verify-offline",
+          "ok": true,
+          "exit": 0,
+          "calls": 0,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "gpt-cancel",
+          "ok": true,
+          "exit": 1,
+          "calls": 31,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "restore-cancel",
+          "ok": true,
+          "exit": 2,
+          "calls": 11,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "restore",
+          "ok": true,
+          "exit": 0,
+          "calls": 37,
+          "writes": 6,
+          "gpt": 1
+        },
+        {
+          "host": "windows",
+          "case": "no-devices",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "many-fastboot",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "mixed-devices",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "wrong-product",
+          "ok": true,
+          "exit": 1,
+          "calls": 4,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "locked",
+          "ok": true,
+          "exit": 1,
+          "calls": 6,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "fastbootd",
+          "ok": true,
+          "exit": 1,
+          "calls": 7,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "getvar-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 4,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "missing-mode",
+          "ok": true,
+          "exit": 1,
+          "calls": 7,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "unknown-size",
+          "ok": true,
+          "exit": 1,
+          "calls": 8,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "enumeration-error",
+          "ok": true,
+          "exit": 1,
+          "calls": 2,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "invalid-size",
+          "ok": true,
+          "exit": 1,
+          "calls": 8,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "duplicate-var",
+          "ok": true,
+          "exit": 1,
+          "calls": 4,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "adb-permissions",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "adb-garbage",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "extra-too-large",
+          "ok": true,
+          "exit": 1,
+          "calls": 9,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "recovery-too-large",
+          "ok": true,
+          "exit": 1,
+          "calls": 13,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "vbmeta-too-large",
+          "ok": true,
+          "exit": 1,
+          "calls": 14,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "vbmeta-system-too-large",
+          "ok": true,
+          "exit": 1,
+          "calls": 15,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "corrupt-super",
+          "ok": true,
+          "exit": 1,
+          "calls": 16,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "zstd-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 16,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "super-write-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 22,
+          "writes": 1,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "extra-write-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 23,
+          "writes": 2,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "erase-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 31,
+          "writes": 10,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "activation-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 36,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "slot-changed",
+          "ok": true,
+          "exit": 1,
+          "calls": 33,
+          "writes": 10,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "reboot-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "activation-ignored",
+          "ok": true,
+          "exit": 1,
+          "calls": 38,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "corrupt-backup",
+          "ok": true,
+          "exit": 1,
+          "calls": 31,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "empty-backup",
+          "ok": true,
+          "exit": 1,
+          "calls": 31,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "wrong-recovery",
+          "ok": true,
+          "exit": 1,
+          "calls": 26,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "missing-twrp",
+          "ok": true,
+          "exit": 1,
+          "calls": 27,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "push-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 28,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "audit-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 29,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "resize-wrong-size",
+          "ok": true,
+          "exit": 1,
+          "calls": 39,
+          "writes": 3,
+          "gpt": 1
+        },
+        {
+          "host": "windows",
+          "case": "gpt-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 32,
+          "writes": 3,
+          "gpt": 1
+        },
+        {
+          "host": "windows",
+          "case": "padded-size",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "wrong-adb-product",
+          "ok": true,
+          "exit": 1,
+          "calls": 4,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "padded-required-sizes",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "diagnose-fastboot",
+          "ok": true,
+          "exit": 0,
+          "calls": 7,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "base-match",
+          "ok": true,
+          "exit": 0,
+          "calls": 12,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "adb-entry",
+          "ok": true,
+          "exit": 0,
+          "calls": 44,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "base-missing",
+          "ok": true,
+          "exit": 0,
+          "calls": 12,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "base-mismatch",
+          "ok": true,
+          "exit": 0,
+          "calls": 12,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "base-recovery",
+          "ok": true,
+          "exit": 0,
+          "calls": 6,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "base-mixed-boot",
+          "ok": true,
+          "exit": 0,
+          "calls": 12,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "base-unauthorized",
+          "ok": true,
+          "exit": 1,
+          "calls": 2,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "base-booting",
+          "ok": true,
+          "exit": 0,
+          "calls": 6,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "menu-update",
+          "ok": true,
+          "exit": 0,
+          "calls": 34,
+          "writes": 8,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "menu-clean",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "windows",
+          "case": "menu-retry-after-cancel",
+          "ok": true,
+          "exit": 0,
+          "calls": 56,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "clean-a",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "clean-b-9g-refused",
+          "ok": true,
+          "exit": 1,
+          "calls": 8,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "clean-b",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "clean-9g",
+          "ok": true,
+          "exit": 0,
+          "calls": 64,
+          "writes": 14,
+          "gpt": 1
+        },
+        {
+          "host": "bash",
+          "case": "update-b-refused",
+          "ok": true,
+          "exit": 1,
+          "calls": 5,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "update",
+          "ok": true,
+          "exit": 0,
+          "calls": 34,
+          "writes": 8,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "update-9g-refused",
+          "ok": true,
+          "exit": 1,
+          "calls": 15,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "cancel-2",
+          "ok": true,
+          "exit": 2,
+          "calls": 15,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "cancel-1",
+          "ok": true,
+          "exit": 2,
+          "calls": 15,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "cancel-0",
+          "ok": true,
+          "exit": 2,
+          "calls": 15,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "invalid-then-confirm",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "restore-noop",
+          "ok": true,
+          "exit": 0,
+          "calls": 8,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "gpt-cancel",
+          "ok": true,
+          "exit": 1,
+          "calls": 31,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "verify-offline",
+          "ok": true,
+          "exit": 0,
+          "calls": 0,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "restore",
+          "ok": true,
+          "exit": 0,
+          "calls": 37,
+          "writes": 6,
+          "gpt": 1
+        },
+        {
+          "host": "bash",
+          "case": "restore-cancel",
+          "ok": true,
+          "exit": 2,
+          "calls": 11,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "no-devices",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "many-fastboot",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "mixed-devices",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "wrong-product",
+          "ok": true,
+          "exit": 1,
+          "calls": 4,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "locked",
+          "ok": true,
+          "exit": 1,
+          "calls": 6,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "fastbootd",
+          "ok": true,
+          "exit": 1,
+          "calls": 7,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "missing-mode",
+          "ok": true,
+          "exit": 1,
+          "calls": 7,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "getvar-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 4,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "unknown-size",
+          "ok": true,
+          "exit": 1,
+          "calls": 8,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "enumeration-error",
+          "ok": true,
+          "exit": 1,
+          "calls": 2,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "duplicate-var",
+          "ok": true,
+          "exit": 1,
+          "calls": 4,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "invalid-size",
+          "ok": true,
+          "exit": 1,
+          "calls": 8,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "adb-permissions",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "adb-garbage",
+          "ok": true,
+          "exit": 1,
+          "calls": 3,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "extra-too-large",
+          "ok": true,
+          "exit": 1,
+          "calls": 9,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "recovery-too-large",
+          "ok": true,
+          "exit": 1,
+          "calls": 13,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "vbmeta-too-large",
+          "ok": true,
+          "exit": 1,
+          "calls": 14,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "vbmeta-system-too-large",
+          "ok": true,
+          "exit": 1,
+          "calls": 15,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "corrupt-super",
+          "ok": true,
+          "exit": 1,
+          "calls": 16,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "zstd-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 16,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "super-write-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 22,
+          "writes": 1,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "extra-write-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 23,
+          "writes": 2,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "erase-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 31,
+          "writes": 10,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "activation-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 36,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "slot-changed",
+          "ok": true,
+          "exit": 1,
+          "calls": 33,
+          "writes": 10,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "reboot-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "activation-ignored",
+          "ok": true,
+          "exit": 1,
+          "calls": 38,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "corrupt-backup",
+          "ok": true,
+          "exit": 1,
+          "calls": 31,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "empty-backup",
+          "ok": true,
+          "exit": 1,
+          "calls": 31,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "wrong-recovery",
+          "ok": true,
+          "exit": 1,
+          "calls": 26,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "missing-twrp",
+          "ok": true,
+          "exit": 1,
+          "calls": 27,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "push-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 28,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "audit-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 29,
+          "writes": 3,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "resize-wrong-size",
+          "ok": true,
+          "exit": 1,
+          "calls": 39,
+          "writes": 3,
+          "gpt": 1
+        },
+        {
+          "host": "bash",
+          "case": "gpt-failed",
+          "ok": true,
+          "exit": 1,
+          "calls": 32,
+          "writes": 3,
+          "gpt": 1
+        },
+        {
+          "host": "bash",
+          "case": "padded-size",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "wrong-adb-product",
+          "ok": true,
+          "exit": 1,
+          "calls": 4,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "diagnose-fastboot",
+          "ok": true,
+          "exit": 0,
+          "calls": 7,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "padded-required-sizes",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "base-match",
+          "ok": true,
+          "exit": 0,
+          "calls": 9,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "adb-entry",
+          "ok": true,
+          "exit": 0,
+          "calls": 44,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "base-mismatch",
+          "ok": true,
+          "exit": 0,
+          "calls": 9,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "base-missing",
+          "ok": true,
+          "exit": 0,
+          "calls": 9,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "base-mixed-boot",
+          "ok": true,
+          "exit": 0,
+          "calls": 9,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "base-recovery",
+          "ok": true,
+          "exit": 0,
+          "calls": 6,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "base-unauthorized",
+          "ok": true,
+          "exit": 1,
+          "calls": 2,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "base-booting",
+          "ok": true,
+          "exit": 0,
+          "calls": 6,
+          "writes": 0,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "menu-update",
+          "ok": true,
+          "exit": 0,
+          "calls": 34,
+          "writes": 8,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "menu-clean",
+          "ok": true,
+          "exit": 0,
+          "calls": 41,
+          "writes": 11,
+          "gpt": 0
+        },
+        {
+          "host": "bash",
+          "case": "menu-retry-after-cancel",
+          "ok": true,
+          "exit": 0,
+          "calls": 56,
+          "writes": 11,
+          "gpt": 0
+        }
+      ]
+    },
+    {
+      "group": "integrity",
+      "count": 140,
+      "passed": true,
+      "seconds": 230.77,
+      "evidence": "tests/.work/suite-20261102-191017/integrity.log",
+      "results": [
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "empty",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "missing-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "duplicate",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "valid",
+          "exit": 0,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "bad-hash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "traversal",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "absolute",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "double-slash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "trailing-slash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "tampered-image",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "tampered-helper",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "missing-dll",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "missing-super",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "partial-bad-super",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "partial-ok",
+          "exit": 0,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "partial-without-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "lock",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "bad-geometry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "zero-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "negative-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "large-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "invalid-hash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "missing-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "duplicate-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "unknown-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "malicious-name",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "unknown-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "duplicate-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "trailing-comma",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "missing-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "uppercase-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "extra-without-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "conflicting-modes",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "unknown-option",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "flash",
+          "case": "installer-only-invalid",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "valid",
+          "exit": 0,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "empty",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "missing-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "duplicate",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "bad-hash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "traversal",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "absolute",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "double-slash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "trailing-slash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "tampered-helper",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "tampered-image",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "missing-dll",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "missing-super",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "partial-ok",
+          "exit": 0,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "partial-bad-super",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "partial-without-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "lock",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "bad-geometry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "zero-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "negative-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "large-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "invalid-hash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "duplicate-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "missing-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "unknown-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "malicious-name",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "duplicate-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "unknown-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "trailing-comma",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "uppercase-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "conflicting-modes",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "extra-without-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "missing-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "unknown-option",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "empty",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "windows",
+          "entry": "restore-super",
+          "case": "installer-only-invalid",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "bad-hash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "traversal",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "absolute",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "double-slash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "trailing-slash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "valid",
+          "exit": 0,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "missing-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "duplicate",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "missing-dll",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "tampered-image",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "tampered-helper",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "missing-super",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "lock",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "partial-bad-super",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "partial-ok",
+          "exit": 0,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "partial-without-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "bad-geometry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "zero-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "negative-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "large-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "invalid-hash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "duplicate-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "missing-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "unknown-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "malicious-name",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "duplicate-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "unknown-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "missing-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "conflicting-modes",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "installer-only-invalid",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "unknown-option",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "trailing-comma",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "empty",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "uppercase-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "flash",
+          "case": "extra-without-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "bad-hash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "traversal",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "valid",
+          "exit": 0,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "absolute",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "double-slash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "trailing-slash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "missing-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "missing-dll",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "duplicate",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "tampered-image",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "missing-super",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "tampered-helper",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "lock",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "partial-bad-super",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "partial-ok",
+          "exit": 0,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "partial-without-entry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "bad-geometry",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "zero-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "negative-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "large-size",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "invalid-hash",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "duplicate-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "missing-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "unknown-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "malicious-name",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "duplicate-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "unknown-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "missing-extra",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "conflicting-modes",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "installer-only-invalid",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "unknown-option",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "trailing-comma",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "uppercase-key",
+          "exit": 1,
+          "ok": true
+        },
+        {
+          "host": "bash",
+          "entry": "restore-super",
+          "case": "extra-without-entry",
+          "exit": 1,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "group": "ui",
+      "count": 31,
+      "passed": true,
+      "seconds": 77.28,
+      "evidence": "tests/.work/suite-20261102-191017/ui.log",
+      "results": [
+        {
+          "host": "windows",
+          "case": "eof",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "back",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "invalid",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "exit",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "mode-invalid",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "languages",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "failed-verify-twice",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "verify-twice",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "help",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "partial",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "report-empty",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "bad-marker",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "exit",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "eof",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "bad-shell",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "invalid",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "back",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "mode-invalid",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "languages",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "ksu",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "no-root",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "help",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "failed-verify-twice",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "report-empty",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "partial",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "bad-marker",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "verify-twice",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "bad-shell",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "ksu",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "no-root",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "native-timeout-and-arguments",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "group": "readiness",
+      "count": 63,
+      "passed": true,
+      "seconds": 249.98,
+      "evidence": "tests/.work/suite-20261102-191017/readiness.log",
+      "results": [
+        {
+          "host": "windows",
+          "case": "missing-super",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "corrupt-super",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "missing-boot",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "normal",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "verify-corrupt",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "bad-tool",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "no-space",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "locked",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "wrong-phone",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "fastbootd",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "no-phone",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "slot-b",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "stock",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "write-failed",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "erase-failed",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "gpt-failed",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "cancel-gpt",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "cancel",
+          "ok": true,
+          "exit": 2
+        },
+        {
+          "host": "windows",
+          "case": "clean-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "restore-noop",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "restore-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "verify-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "base-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "update-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "normal",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "missing-super",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "verify-corrupt",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "missing-boot",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "corrupt-super",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "bad-tool",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "no-space",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "locked",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "wrong-phone",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "fastbootd",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "no-phone",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "slot-b",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "stock",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "write-failed",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "erase-failed",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "gpt-failed",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "cancel-gpt",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "cancel",
+          "ok": true,
+          "exit": 2
+        },
+        {
+          "host": "bash",
+          "case": "clean-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "restore-noop",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "verify-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "restore-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "base-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "update-success",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "export-empty",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "export-invalid-header",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "export-oversize",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "export-newest",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "export-empty",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "export-invalid-header",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "export-oversize",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "export-lock",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "export-newest",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "bash",
+          "case": "export-report-path-file",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "bash",
+          "case": "export-zip-failure",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "export-lock",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "export-report-path-file",
+          "ok": true,
+          "exit": 1
+        },
+        {
+          "host": "windows",
+          "case": "pipeline-stop-before-write",
+          "ok": true,
+          "exit": 0
+        },
+        {
+          "host": "windows",
+          "case": "pipeline-stop-after-write",
+          "ok": true,
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "group": "payload",
+      "count": 12,
+      "passed": true,
+      "seconds": 52.49,
+      "evidence": "tests/.work/suite-20261102-191017/payload.log",
+      "results": []
+    },
+    {
+      "group": "packaging",
+      "count": 11,
+      "passed": true,
+      "seconds": 3.78,
+      "evidence": "tests/.work/suite-20261102-191017/packaging.log",
+      "results": [
+        {
+          "case": "full",
+          "ok": true
+        },
+        {
+          "case": "installer",
+          "ok": true
+        },
+        {
+          "case": "missing-entry",
+          "ok": true
+        },
+        {
+          "case": "duplicate-case",
+          "ok": true
+        },
+        {
+          "case": "traversal",
+          "ok": true
+        },
+        {
+          "case": "double-slash",
+          "ok": true
+        },
+        {
+          "case": "tampered-source",
+          "ok": true
+        },
+        {
+          "case": "lock",
+          "ok": true
+        },
+        {
+          "case": "private-log",
+          "ok": true
+        },
+        {
+          "case": "private-report",
+          "ok": true
+        },
+        {
+          "case": "existing-archive",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "group": "platform",
+      "count": 8,
+      "passed": true,
+      "seconds": 90.23,
+      "evidence": "tests/.work/suite-20261102-191017/platform.log",
+      "results": [
+        {
+          "case": "windows-case-alias-refused",
+          "ok": true
+        },
+        {
+          "case": "bash-case-alias-refused",
+          "ok": true
+        },
+        {
+          "case": "bash-timeout-kills-ignored-term",
+          "ok": true
+        },
+        {
+          "case": "ps7-clean",
+          "ok": true
+        },
+        {
+          "case": "ps7-update",
+          "ok": true
+        },
+        {
+          "case": "ps7-verify",
+          "ok": true
+        },
+        {
+          "case": "ps7-menu",
+          "ok": true
+        },
+        {
+          "case": "bat-module-path",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "group": "recovery_legacy",
+      "count": 39,
+      "passed": true,
+      "seconds": 385.31,
+      "evidence": "tests/.work/suite-20261102-191017/recovery_legacy.log",
+      "results": [
+        {
+          "case": "expand",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "restore",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "cache-unmount",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "cache-busy",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "bad-gpt",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "bad-checksum",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "missing-backup",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "stale-gpt",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "mount-busy",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "other-mount",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "wrong-device",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "wrong-sector",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "wrong-result",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "missing-confirmation",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "bad-guid",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "disk-bounds",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "current-backup-failed",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "disk-too-small",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "disk-unaligned",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "disk-invalid",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "disk-too-large",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "disk-minimum",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "disk-leading-zero",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "disk-512g",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "disk-1t",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "alias-path",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "bootdevice-only",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "no-aliases",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "conflicting-global",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "conflicting-boot",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "wrong-userdata",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "broken-super-alias",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "missing-super-node",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "wrong-super-name",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "wrong-userdata-name",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "stat-failed",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "stat-empty",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "readlink-failed",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        },
+        {
+          "case": "verify-no-aliases",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 0,
+          "numeric_test": "signed32"
+        }
+      ]
+    },
+    {
+      "group": "recovery_gpt31",
+      "count": 19,
+      "passed": true,
+      "seconds": 195.42,
+      "evidence": "tests/.work/suite-20261102-191017/recovery_gpt31.log",
+      "results": [
+        {
+          "case": "expand",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "restore",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 1,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "verify",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "audit",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "already-expanded",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "already-stock",
+          "ok": true,
+          "exit": 0,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "wrong-type",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "wrong-start",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "wrong-boundary",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "alias-conflict",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "stale-backup",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "missing-confirm",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "attrs",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "bad-gpt",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "disk-bounds",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "duplicate-super",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "wrong-guid",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "busy-cache",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        },
+        {
+          "case": "changed-disk-guid",
+          "ok": true,
+          "exit": 1,
+          "gpt_writes": 0,
+          "geometry": "31/32@751680",
+          "untouched_partitions": 30,
+          "real_block_device": false
+        }
+      ]
+    }
+  ],
+  "syntax_and_translations": [
+    {
+      "group": "translations",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.19
+    },
+    {
+      "group": "syntax-check-base",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.09
+    },
+    {
+      "group": "syntax-flash",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.12
+    },
+    {
+      "group": "syntax-restore-super",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.12
+    },
+    {
+      "group": "syntax-START",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.11
+    },
+    {
+      "group": "syntax-support-report",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.12
+    },
+    {
+      "group": "syntax-builds",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.12
+    },
+    {
+      "group": "syntax-common",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.11
+    },
+    {
+      "group": "syntax-language",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.14
+    },
+    {
+      "group": "syntax-menu",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.12
+    },
+    {
+      "group": "syntax-prepare-super",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.12
+    },
+    {
+      "group": "syntax-status",
+      "exit": 0,
+      "passed": true,
+      "seconds": 0.12
+    }
+  ],
+  "sources": {
+    "installer/check-base.ps1": "2697b20a2eb716db9097525f665089debc9b939d436f82ee2c6f8dd5fb4cc1ca",
+    "installer/check-base.sh": "58c9d290a8a2349220c8a5d7911b27657132d1f9bddfc900d56de415f4df1371",
+    "installer/flash.ps1": "2120f6d37300d6d076da1b080f10b809c1ae94416e5ee0f60197cfd7c54f0a11",
+    "installer/flash.sh": "d7d820f6afe231801033e67b7823dbd9519e41c42204eda13d4b5efe1f9293ac",
+    "installer/PORT_R783.json": "414e6d50a98ba1579088890d46f9c64d200836c89e00de2db70de249cf6cf3fe",
+    "installer/prepare-payload.py": "ce7194d0b077431d242f00dd19212315e618776bd8703af5f5703b1d36d1b7ee",
+    "installer/restore-super.ps1": "d27782a0b6e19923ddd8d6b6f066a725cbf23c025f351d209199c53099218c96",
+    "installer/restore-super.sh": "4054c7853f4304b38b892ee70924dd005256626b0340b7a2ebc91ccdb2997d63",
+    "installer/START.sh": "84ceaa2734bfbd216bbbcd1790efcf529a70549338ee03c40e9f6d688ec30a19",
+    "installer/support-report.ps1": "0c7d656559646c57516e2c1cfb43b6a6341e07955531029968b53308af4b1e23",
+    "installer/support-report.sh": "31b1ca4ddad31e24bf06d26019e3eb0f86f0d0fbcfed3fcfe737f965d95ea82f",
+    "installer/scripts/builds.ps1": "141d1da78f1daa18ada1a4a39bb45d8731c9f783820b96e21247e1b7875b5383",
+    "installer/scripts/builds.sh": "edede7206bfb7cc45d70e7d841b1a3c9998108a76d0b1c48dd88cec622fc1065",
+    "installer/scripts/common.ps1": "fb8b51961521c16acfc8eebbc4226df34f8ccd4fac604d541c16db219574e0b6",
+    "installer/scripts/common.sh": "884546d4123816f8eb06b45e28d99433955612aaa97e70f53e059721df6cf76a",
+    "installer/scripts/language.ps1": "c27a27cd10101cd42c5e862b412cb6f25822e74b946d5a8a194e874c8aa04c45",
+    "installer/scripts/language.sh": "74509768bb3e128077afed97960c23ed19121aae4ba6ef3b76600ccde5ead09c",
+    "installer/scripts/menu.ps1": "6b1dbb45a267f06dc99b6826e6d89c0dec3f5b6ce4350d439bc08ab090f901ce",
+    "installer/scripts/menu.sh": "95884a28c44c29b0c38faed64c763d4b4c5db734eeb4998a8fff8e2708965f5f",
+    "installer/scripts/payload.py": "0fd9ed7b0178aebb8a1edefe792431a237a5627b2fb3bb2405517828691f62f1",
+    "installer/scripts/prepare-super.sh": "7852c36463b1ef8df5040df5fb5366a0cad2d36f0c20727783211de9f6c0ea16",
+    "installer/scripts/process.ps1": "3c23eaca61d3f65149bdf132154f0b5214a7e8aabd98f4b61ee5856deb8b8a6d",
+    "installer/scripts/status.ps1": "6d260615c5265bc2dccc19f12f30aeab5674c5a5176532ed388c81fcc726a700",
+    "installer/scripts/status.sh": "726aae5853dba2a0d60d709346f08d4f78701c195aa776d3eceaa9c681c3a32f",
+    "tests/host_support.py": "c822d824aa1af8787b3c545a5edf9ace5cf59a54dc52241d92fe089a89d6c97d",
+    "tests/mock_device.py": "4449a0d94a529417b188c6eead75d882d231c88f8393522b82cd066d3d438a8a",
+    "tests/mock_gpt.py": "c630d1fceb02e8117699d5b8d5e5fcddb324becf3f19358993c03d7cd9b643d1",
+    "tests/mock_tool.cs": "291d419256e3850a2ecaa72130bfdf62d63f360a8faa0878b5533d445d04f4da",
+    "tests/run_all.py": "3f2703be4a8c7d4d9cbed4ff7a1337a0a4e512979190ea66a8f7cf859fc83a6c",
+    "tests/synthetic_payload.py": "f74b3a7ec5b21863a93cd3df4df6b2db45a89bf8bf7705457a56f8475c308b96",
+    "tests/test_hosts.py": "128963df7c8aa96ef2c6e9ac9223b7619b5066ea408692d3d144a491a78f1b30",
+    "tests/test_integrity.py": "f7e6d367628620d7400f4cd70a1d03fead4be89c05e0cdd097a321574cb7992d",
+    "tests/test_packaging.py": "ecf72f52214351147d4dcfa547c405a9c5ac8ccf3e015abce0d77c1290a5fb26",
+    "tests/test_payload.py": "a0b5e12af24a291d69c1e8ad74cc55cb0b3ff3979847f0eed74804014c1f8a18",
+    "tests/test_platform.py": "49cd3251f6643a1b5643c02475f46825090525984fad0dc5da48a8214c64bb5b",
+    "tests/test_readiness.py": "af9393c01c4e410c4f48f2a911ab02f0da8acf68c1561dcbd1e8fa408b1978f3",
+    "tests/test_recovery_gpt31.py": "08607949a22ccfea5c8074b6fe5a206502c855e7d2b5b877ea9e5c2773112347",
+    "tests/test_recovery_legacy.py": "3f6b6c58d4ec013c4e573f507c7d8a709a5448269a1aae9595e89a545edb40bb",
+    "tests/test_ui.py": "06e0635f22f81ee228a72aacc382e13652c9f98b9b060938e7ddb1dedba7f86b",
+    "tools/build_release.py": "eb1ce3ed88aee217b4b1abceaebed20bc0194300fc65ba41622433d33978ba79",
+    "tools/generate_messages.py": "5219d2b53fcebf6d7abf8f2b4114155cafa052ded2b96bb968978cd76d434fdb",
+    "tools/import_assets.py": "b873d334f5a620e8f51a176dd50aa78f67e6350f1cf4b6f76ea40c2022349aa0",
+    "tools/messages.json": "c2d4f3d2041ed2015498a3e87521fd41b78eaf989c4d189390b1162db96fb978",
+    "tools/update_source_manifest.py": "702726d130cbc516575e85efc8b8e69c17755e42190abc18028fe8f5237c0382",
+    "tools/verify_release.py": "8148ebf370bd7db02f1a00ae06c952735def08daee2f46b5c9170a839174a1c5"
+  },
+  "real_payload": {
+    "hosts": [
+      {
+        "host": "windows",
+        "mode": "VerifyOnly",
+        "seconds": 38.42,
+        "passed": true
+      },
+      {
+        "host": "bash",
+        "mode": "VerifyOnly",
+        "seconds": 117.55,
+        "passed": true
+      }
+    ],
+    "image_headers": true,
+    "zstd_sparse_lp": true,
+    "sparse_bytes": 10362740588,
+    "sparse_sha256": "a13201d9b12eed8da49bbe34f28b9c76da65592e6c1a8d64703796137bebd3fe",
+    "real_device": false,
+    "manifest_sha256": "866d7044cc1ef9dd94cca721dd68091d0f2221257dc6bdfd32b189f16ac89397"
+  },
+  "releases": [
+    {
+      "file": "FUXI-INSTALLER-2.6.0-PKG110-INSTALLER.zip",
+      "bytes": 202699723,
+      "sha256": "03ea7e2233c8d38fea341cd5dcc7a61fcabcaad0d91758099c6dd31ba09310a9",
+      "members": 49,
+      "omitted": [
+        "images/super.img.zst"
+      ],
+      "zip_crc_sha256_verified": true,
+      "device_commands_executed": false
+    },
+    {
+      "file": "FUXI-INSTALLER-2.6.0-PKG110-FULL.zip",
+      "bytes": 9214861242,
+      "sha256": "a6f277d596f3b9841ffd92d1a8f01a4d51b172be5d2ac1d7ab7737eb45f100c7",
+      "members": 50,
+      "omitted": [],
+      "zip_crc_sha256_verified": true,
+      "device_commands_executed": false
+    }
+  ],
+  "quick_check": [
+    {
+      "host": "windows",
+      "seconds": 5.953,
+      "passed": true,
+      "scope": "diagnostic file verification only, including process startup",
+      "real_device": false
+    },
+    {
+      "host": "bash",
+      "seconds": 9.047,
+      "passed": true,
+      "scope": "diagnostic file verification only, including process startup",
+      "real_device": false
+    }
+  ]
+}

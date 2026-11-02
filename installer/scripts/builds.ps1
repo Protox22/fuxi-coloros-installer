@@ -24,7 +24,7 @@ function Assert-Build([string]$Root, [string]$Build) {
     }
     # Run only the current reviewed shell; each build then verifies its own
     # firmware profile, checksums, partition capacities and device before writes.
-    foreach ($name in @('flash.ps1', 'flash.sh', 'restore-super.ps1', 'restore-super.sh',
+    foreach ($name in @('scripts/status.ps1', 'scripts/status.sh', 'support-report.ps1', 'support-report.sh', 'START.sh', 'scripts/menu.sh', 'scripts/language.sh', 'scripts/process.ps1', 'check-base.ps1', 'check-base.sh', 'flash.ps1', 'flash.sh', 'restore-super.ps1', 'restore-super.sh',
         'scripts/common.ps1', 'scripts/common.sh', 'scripts/language.ps1',
         'scripts/menu.ps1', 'scripts/builds.ps1', 'scripts/builds.sh', 'scripts/prepare-super.sh')) {
         $candidate = Join-Path $path $name

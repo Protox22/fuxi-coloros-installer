@@ -10,30 +10,37 @@ function Read-DeviceProperty([string]$Name) {
 try {
     Start-Session 'check-base'
     Write-Step (Get-Text 'checkingFiles')
-    Verify-Payload -InstallerOnly
+    Verify-Payload -InstallerOnly -DiagnosticsOnly
+    Show-LocalReadiness
+    Write-Readiness 'toolsAvailable' 'OK'
     Write-Host ('  ' + (Get-Text 'checkRequired' @($RequiredFirmware)))
     # Read only: do not call Connect-Device, which may reboot Android.
     $fastbootDevices = @(Get-FastbootDevices)
-    $adbDevices = @((Invoke-Tool $Adb @('devices') -Quiet) | Where-Object { $_ -match '^\S+\s+(device|recovery|offline|unauthorized|sideload)\s*$' })
+    $adbDevices = @(Get-AdbDevices)
     if ($fastbootDevices.Count + $adbDevices.Count -ne 1) { Fail 'Connect exactly one device. For a base check, start Android and authorize USB debugging.' }
     if ($fastbootDevices.Count -eq 1) {
         $script:Serial = $fastbootDevices[0]
         if ((Get-FastbootVar 'product') -ne 'fuxi') { Fail 'Connected device is not Xiaomi 13 fuxi.' }
+        Show-FastbootReadiness (Get-FastbootVar 'current-slot') (Get-FastbootVar 'unlocked') (Get-FastbootVar 'is-userspace') (Get-SuperSize)
         Write-Detail 'Base diagnosis: unconfirmed-fastboot'
         Write-Host ('  ' + (Get-Text 'fastbootUnknown')) -ForegroundColor Yellow
         Write-Host ('  ' + (Get-Text 'startAndroid'))
+        $script:SessionOutcome = 'finished'
         exit 0
     }
     if ($adbDevices[0] -notmatch '^(\S+)\s+(device|recovery)\s*$') { Fail 'Authorize USB debugging on the phone, then retry.' }
     $script:Serial = $Matches[1]
     $adbState = $Matches[2]
     if ((Read-DeviceProperty 'ro.product.device') -ne 'fuxi') { Fail 'Connected ADB device is not fuxi.' }
+    Write-Readiness 'cleanTechnical' 'UNKNOWN'
+    Write-Readiness 'updateTechnical' 'UNKNOWN'
     $twrp = Read-DeviceProperty 'ro.twrp.version.skkk.code'
     $bootMode = Read-DeviceProperty 'ro.bootmode'
     $bootCompleted = Read-DeviceProperty 'sys.boot_completed'
     if ($adbState -eq 'recovery' -or $twrp -or $bootMode -eq 'recovery' -or $bootCompleted -ne '1') {
         Write-Detail 'Base diagnosis: unconfirmed-recovery-or-boot'
         Write-Host ('  ' + (Get-Text 'notBooted')) -ForegroundColor Yellow
+        $script:SessionOutcome = 'finished'
         exit 0
     }
     $system = Read-DeviceProperty 'ro.build.version.incremental'
@@ -58,7 +65,9 @@ try {
     }
     Write-Host ('  ' + (Get-Text 'advisory')) -ForegroundColor DarkGray
     Write-Host ('  ' + (Get-Text 'customWarning')) -ForegroundColor Yellow
+    $script:SessionOutcome = 'finished'
 } catch {
     Write-Host ((Get-Text 'error') + ': ' + $_.Exception.Message) -ForegroundColor Red
+    Show-ErrorHint $_.Exception.Message
     exit 1
 } finally { Stop-Session }

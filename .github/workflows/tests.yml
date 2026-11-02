@@ -1,0 +1,27 @@
+name: Offline installer checks
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  offline:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Linux test dependency
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y zstd zip
+      - name: Run tests without firmware or USB devices
+        run: python tests/run_all.py
+      - name: Upload offline test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-tests-${{ runner.os }}
+          path: tests/.work/
+          include-hidden-files: true

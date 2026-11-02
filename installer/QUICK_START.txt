@@ -1,0 +1,85 @@
+FUXI / COLOROS 2.6 — Xiaomi 13 (fuxi) — Port by tomekcz
+
+РУССКИЙ
+1. Полностью распакуйте FULL ZIP в обычную папку. Не запускайте из архиватора.
+   FULL уже содержит прошивку. INSTALLER требует добавить подходящий
+   images/super.img.zst из той же сборки PKG110, указанной в firmware.conf.
+2. Windows: дважды нажмите FLASH.bat. Linux: откройте терминал в папке
+   и выполните bash START.sh (или bash flash.sh).
+3. Выберите 3 для проверки файлов, затем 4 для диагностики телефона.
+   Эти пункты не прошивают и не перезагружают телефон.
+4. Сохраните личные файлы на другом устройстве, зарядите телефон.
+   Нужны Xiaomi 13 fuxi и заранее разблокированный загрузчик.
+5. Пункт 1 → 1: чистая установка со стиранием данных.
+   Пункт 1 → 2: обновление уже установленного совместимого порта,
+   того же варианта root. Сохранность и совместимость ОС не гарантируются.
+   Нужны super 11 ГиБ и слот A. При 9 ГиБ обновление будет остановлено.
+6. Прочтите план. y — продолжить, n или Enter — отменить.
+   Отмена до первой записи безопасна. После подготовки recovery/AVB
+   отдельный вопрос о GPT сообщает, что эти разделы уже изменены.
+   Во время записи не отключайте USB. Не блокируйте загрузчик.
+7. После завершения проверьте запуск Android и свои данные на телефоне.
+
+Если телефон не найден:
+- Используйте кабель передачи данных, другой USB-порт, отключите другие телефоны.
+- Для fastboot выключите телефон, удерживайте питание + громкость вниз.
+- Для Android включите USB-отладку и подтвердите разрешение на экране телефона.
+- Windows: проверьте драйвер Android Bootloader Interface в диспетчере устройств.
+- Linux: нужны adb, fastboot, zstd, GNU coreutils и права USB (udev/plugdev).
+  Ubuntu/Debian: sudo apt install adb fastboot zstd android-sdk-platform-tools-common
+  При необходимости добавьте свой аккаунт в plugdev и войдите заново.
+  Не запускайте весь установщик через sudo для обхода прав USB.
+
+Не хватает места: требуется размер распакованного образа + 1 ГиБ
+(для текущего PKG110 около 10.7 ГиБ). Освободите диск либо задайте TEMP
+в Windows / TMPDIR в Linux. Временный образ удаляется при штатном выходе,
+в том числе при ошибке; исходная прошивка остаётся.
+Ошибка SHA-256: распакуйте правильный комплект заново; не пересчитывайте
+суммы ради обхода проверки. Сохраните logs/*.log и, если есть, backups/.
+После частичной записи не продолжайте вручную с середины.
+Пункт 2 — только возврат размера super к 9 ГиБ. Он стирает данные и требует
+последующей установки официальной прошивки. Это не способ исправить любой сбой.
+
+ENGLISH
+Extract the entire FULL ZIP, run FLASH.bat (Windows) or bash START.sh (Linux).
+3: verify files. 4: read-only phone/base diagnosis. L: choose RU / EN / PL.
+1 → 1: clean install, erases data. 1 → 2: same compatible port/root variant
+update, requires existing 11 GiB super and slot A. Back up files first.
+Review the plan. y confirms; n, Enter or EOF cancels. Keep USB connected.
+2 is an advanced partition-size restore, NOT a stock ROM installation.
+For Linux install adb, fastboot, zstd, coreutils and configure USB udev rules.
+Use a data cable, disconnect other phones, authorize Android USB debugging
+or enter fastboot with power + volume down. Windows needs a fastboot driver.
+Logs: logs/. GPT backups: backups/ (partition table, not personal files).
+On error keep the log; do not bypass checks or resume halfway through writes.
+Confirm Android startup and data accessibility on the phone after reboot.
+
+POLSKI
+Rozpakuj cały FULL ZIP. Windows: FLASH.bat. Linux: bash START.sh.
+3: sprawdź pliki. 4: diagnostyka telefonu/bazy bez zapisu. L: RU / EN / PL.
+1 → 1: czysta instalacja usuwa dane. 1 → 2: aktualizacja tego samego zgodnego
+portu i wariantu root; wymaga super 11 GiB i slotu A. Zrób kopię plików.
+Sprawdź plan. y potwierdza; n lub Enter anuluje. Nie odłączaj kabla USB.
+2 przywraca rozmiar super, usuwa dane i wymaga później oficjalnego systemu.
+Linux: zainstaluj adb, fastboot, zstd, coreutils oraz reguły USB udev.
+Windows: sprawdź sterownik fastboot. Użyj kabla danych i odłącz inne telefony.
+Fastboot: zasilanie + ciszej. Android: włącz i autoryzuj debugowanie USB.
+Dzienniki: logs/. Kopie GPT: backups/ (nie zawierają plików osobistych).
+Przy błędzie zachowaj dziennik. Nie pomijaj kontroli i nie kontynuuj od środka.
+Po restarcie sprawdź uruchomienie Androida oraz dostęp do danych.
+
+USB setup reference: https://developer.android.com/studio/run/device
+
+2.6: Пункт 4 — быстрая проверка без чтения образов. OK означает отдельное
+техническое условие, а не готовность прошивки; BLOCKED — препятствие;
+UNKNOWN — не проверено. Совместимость обновления пока не подтверждается: списка
+проверенных переходов между версиями и KSU/без root нет.
+Пункт 3 по-прежнему проверяет все хеши. Перед записью полная проверка обязательна.
+Пункт 6 — ZIP для помощи с обезличенным журналом этапов. Полные логи,
+серийные номера, личные пути и GPT-копии в него не включаются. На Linux
+для экспорта нужен zip (Ubuntu/Debian: sudo apt install zip). Сам установщик
+не требует zip. Отчёты находятся в reports/.
+EN: Option 4 is a quick check without hashing firmware. Option 6 exports
+fixed operation/status codes to reports/. Linux ZIP export requires zip.
+PL: Opcja 4: szybka kontrola bez haszowania systemu. Opcja 6: raport ZIP
+w reports/, bez numeru seryjnego i prywatnych ścieżek. Linux wymaga zip.

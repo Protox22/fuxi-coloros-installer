@@ -1,5 +1,6 @@
 ﻿Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = New-Object Text.UTF8Encoding $false
 if ($PSVersionTable.PSEdition -eq 'Desktop') {
     # A .bat launched from PowerShell 7 can inherit its incompatible module paths.
     Import-Module "$PSHOME/Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1" -Force
@@ -23,9 +24,28 @@ $DetailWriter = $null
 $AllowedBootSlots = @('a')
 $ExpectedBootSlot = ''
 $CheckedBootSlot = ''
+$SessionLog = ''
 if (-not (Test-Path Variable:Compact)) { $Compact = $false }
 
+. "$PSScriptRoot/status.ps1"
+
 function Fail([string]$Message) { throw $Message }
+
+function Show-ErrorHint([string]$Message) {
+    Show-FailureState
+    $key = switch -Regex ($Message) {
+        'SHA-256|checksum|missing.*file|firmware.conf' { 'hintFiles'; break }
+        'installer.lock' { 'hintLock'; break }
+        'space|GiB free' { 'hintSpace'; break }
+        'slot' { 'hintSlot'; break }
+        'required tool|executable|not recognized' { 'hintTools'; break }
+        'device|ADB|locked|permissions|Timed out' { 'hintUsb'; break }
+        default { 'hintStopped' }
+    }
+    Write-Host (Get-Text $key) -ForegroundColor Yellow
+    Write-Event 'error' $key
+    if ($script:SessionLog) { Write-Host (Get-Text 'logPath' @($script:SessionLog)) }
+}
 
 function Write-Detail([string]$Message, [switch]$Quiet) {
     if ($script:Compact) {
@@ -34,7 +54,7 @@ function Write-Detail([string]$Message, [switch]$Quiet) {
 }
 
 function Write-Step([string]$Message) {
-    if ($script:Compact) { Write-Host "  > $Message" -ForegroundColor Cyan }
+    Write-Host "  > $Message" -ForegroundColor Cyan
 }
 
 function Read-Confirmation([string]$Detailed, [string]$Short) {
@@ -50,28 +70,41 @@ function Read-Confirmation([string]$Detailed, [string]$Short) {
     }
 }
 
-function Verify-Payload([switch]$InstallerOnly) {
-    $required = @('FLASH.bat', 'scripts/menu.ps1', 'scripts/language.ps1', 'check-base.ps1', 'flash.ps1', 'flash.sh', 'restore-super.ps1', 'restore-super.sh',
+function Verify-Payload([switch]$InstallerOnly, [switch]$DiagnosticsOnly) {
+    Write-Event 'phase.verify' 'started'
+    $required = @('scripts/status.ps1', 'scripts/status.sh', 'support-report.ps1', 'support-report.sh', 'FLASH.bat', 'START.sh', 'QUICK_START.txt', 'scripts/menu.ps1', 'scripts/menu.sh', 'scripts/language.ps1', 'scripts/language.sh', 'scripts/process.ps1', 'check-base.ps1', 'check-base.sh', 'flash.ps1', 'flash.sh', 'restore-super.ps1', 'restore-super.sh',
         'scripts/common.ps1', 'scripts/common.sh', 'scripts/builds.ps1', 'scripts/builds.sh', 'scripts/prepare-super.sh', 'images/recovery.img', 'images/super.img.zst',
         'images/vbmeta.img', 'images/vbmeta_system.img', 'tools/TWRP-FUXI-A17.img', 'bin/platform-tools-windows/adb.exe',
         'bin/platform-tools-windows/fastboot.exe', 'bin/platform-tools-windows/zstd.exe', 'bin/platform-tools-windows/AdbWinApi.dll',
         'bin/platform-tools-windows/AdbWinUsbApi.dll', 'bin/platform-tools-windows/NOTICE.txt',
         'bin/platform-tools-windows/source.properties', 'bin/platform-tools-windows/LICENSE-zstd.txt',
         'firmware.conf', 'prepare-payload.py', 'scripts/payload.py', 'PREPARE_PAYLOAD.bat')
-    $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
+    $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
     $sumFile = Join-Path $Root 'SHA256SUMS.txt'
-    foreach ($line in Get-Content -LiteralPath $sumFile) {
+    $entries = @(Get-Content -LiteralPath $sumFile)
+    $index = 0
+    foreach ($line in $entries) {
         if ($line -notmatch '^([0-9a-fA-F]{64})  (?:\./)?([A-Za-z0-9_./-]+)$') { Fail "Invalid checksum entry: $line" }
         $expected = $Matches[1]
         $relative = $Matches[2]
-        if ($relative.StartsWith('/') -or $relative -match '(^|/)\.\.?(/|$)' -or -not $seen.Add($relative)) {
+        if ($relative.StartsWith('/') -or $relative.EndsWith('/') -or $relative.Contains('//') -or $relative -match '(^|/)\.\.?(/|$)' -or -not $seen.Add($relative)) {
             Fail "Unsafe or duplicate checksum path: $relative"
         }
         $path = Join-Path $Root $relative
+        $prefix = $Root
+        foreach ($part in $relative.Split('/')) {
+            $prefix = Join-Path $prefix $part
+            if (Test-Path -LiteralPath $prefix) {
+                if ((Get-Item -LiteralPath $prefix -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) { Fail "Reparse point in checksum path: $relative" }
+            }
+        }
+        if ($DiagnosticsOnly -and ($relative.StartsWith('images/') -or $relative.StartsWith('tools/'))) { continue }
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
             if ($InstallerOnly -and $relative -eq 'images/super.img.zst') { Write-Detail 'OMITTED  images/super.img.zst (installer-only check)'; continue }
             Fail "Required release file is missing: $relative"
         }
+        $index++
+        if ($Compact) { Write-Host ('  ' + (Get-Text 'checkingFile' @($index, $entries.Count, $relative))) }
         if ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne $expected) { Fail "SHA-256 mismatch: $relative" }
         Write-Detail "GOOD  $relative"
     }
@@ -122,17 +155,30 @@ function Start-Session([string]$Operation) {
     $script:SessionLock.Flush()
     $logs = Join-Path $Root 'logs'
     New-Item -ItemType Directory -Force -Path $logs | Out-Null
-    $log = Join-Path $logs ((Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + $PID + '-' + $Operation + '.log')
+    $log = Join-Path $logs ((Get-Date -Format 'yyyyMMdd-HHmmssfff') + '-' + $PID + '-' + [guid]::NewGuid().ToString('N').Substring(0, 8) + '-' + $Operation + '.log')
+    $script:SessionLog = $log
+    $script:EventFile = $log + '.events.tsv'
+    Write-Event ('session.' + $Operation) 'started'
     if ($Compact) {
         $script:DetailWriter = New-Object IO.StreamWriter ($log + '.details.txt'), $false, (New-Object Text.UTF8Encoding $true)
         $script:DetailWriter.AutoFlush = $true
     }
     Start-Transcript -LiteralPath $log -NoClobber | Out-Null
     $script:TranscriptStarted = $true
-    Write-Detail "Session log: $log"
+    Write-Host (Get-Text 'logPath' @($log))
 }
 
 function Stop-Session {
+    Write-Event 'result' $script:SessionOutcome
+    if ($script:SuperImage) {
+        # Delete only the exact temporary file and directory created by this process.
+        try {
+            if (Test-Path -LiteralPath $script:SuperImage) { Remove-Item -LiteralPath $script:SuperImage -ErrorAction Stop }
+            Remove-Item -LiteralPath (Split-Path -Parent $script:SuperImage) -ErrorAction Stop
+            Write-Host (Get-Text 'tempRemoved')
+        } catch { Write-Warning "Temporary image cleanup failed: $script:SuperImage" }
+        $script:SuperImage = $null
+    }
     if ($script:TranscriptStarted) { try { Stop-Transcript | Out-Null } catch {}; $script:TranscriptStarted = $false }
     if ($null -ne $script:DetailWriter) { $script:DetailWriter.Dispose(); $script:DetailWriter = $null }
     if ($null -ne $script:SessionLock) {
@@ -163,31 +209,13 @@ function Check-RequiredImages {
     }
 }
 
-function Invoke-Tool([string]$Executable, [string[]]$Arguments, [switch]$Quiet) {
-    Write-Detail ('> ' + $Executable + ' ' + ($Arguments -join ' ')) -Quiet
-    $previous = $ErrorActionPreference
-    $ErrorActionPreference = 'Continue' # Windows PowerShell wraps native stderr in ErrorRecord.
-    $lines = New-Object System.Collections.Generic.List[string]
-    $global:LASTEXITCODE = $null
-    try {
-        & $Executable @Arguments 2>&1 | ForEach-Object {
-            $line = $_.ToString()
-            $lines.Add($line)
-            Write-Detail $line -Quiet:$Quiet
-        }
-        $code = $global:LASTEXITCODE
-    } finally { $ErrorActionPreference = $previous }
-    if ($null -eq $code -or $code -ne 0) {
-        $detail = "$([IO.Path]::GetFileName($Executable)) failed (exit $code): $($Arguments -join ' ')"
-        Write-Detail $detail -Quiet
-        if ($Compact) { Fail (Get-Text 'toolFailed' @([IO.Path]::GetFileName($Executable), $code)) }
-        Fail $detail
-    }
-    return $lines.ToArray()
-}
+. "$PSScriptRoot/process.ps1"
 
-function Invoke-Fastboot([string[]]$Arguments) { Invoke-Tool $Fastboot (@('-s', $script:Serial) + $Arguments) }
-function Invoke-Adb([string[]]$Arguments) { Invoke-Tool $Adb (@('-s', $script:Serial) + $Arguments) }
+function Invoke-Fastboot([string[]]$Arguments) {
+    Write-Step ('fastboot ' + ($Arguments[0..([Math]::Min(1, $Arguments.Count - 1))] -join ' '))
+    Invoke-DeviceTool 'fastboot' $Arguments
+}
+function Invoke-Adb([string[]]$Arguments) { Invoke-DeviceTool 'adb' $Arguments }
 
 function Get-FastbootVar([string]$Name) {
     $output = (Invoke-Tool $Fastboot @('-s', $script:Serial, 'getvar', $Name) -Quiet) -join "`n"
@@ -212,7 +240,8 @@ function Get-FastbootDevices {
 
 function Wait-Fastboot {
     Write-Detail 'Waiting for the selected device in bootloader fastboot...'
-    for ($i = 0; $i -lt 120; $i++) {
+    $timer = [Diagnostics.Stopwatch]::StartNew()
+    while ($timer.Elapsed.TotalSeconds -lt 120) {
         $devices = @(Get-FastbootDevices)
         if ($devices.Count -gt 1) { Fail 'Disconnect other fastboot devices.' }
         if ($devices.Count -eq 1 -and $devices[0] -eq $script:Serial) { return }
@@ -223,7 +252,8 @@ function Wait-Fastboot {
 
 function Wait-Adb {
     Write-Detail 'Waiting for the selected device in TWRP recovery...'
-    for ($i = 0; $i -lt 180; $i++) {
+    $timer = [Diagnostics.Stopwatch]::StartNew()
+    while ($timer.Elapsed.TotalSeconds -lt 180) {
         try { $state = ((Invoke-Tool $Adb @('-s', $script:Serial, 'get-state') -Quiet) -join '').Trim() }
         catch { $state = '' }
         if ($state -eq 'device' -or $state -eq 'recovery') { return }
@@ -233,9 +263,10 @@ function Wait-Adb {
 }
 
 function Connect-Device {
+    Write-Event 'phase.device' 'started'
     [void](Invoke-Tool $Adb @('start-server') -Quiet)
     $devices = @(Get-FastbootDevices)
-    $adbDevices = @((Invoke-Tool $Adb @('devices') -Quiet) | Where-Object { $_ -match '^\S+\s+(device|recovery|offline|unauthorized|sideload)\s*$' })
+    $adbDevices = @(Get-AdbDevices)
     if ($devices.Count + $adbDevices.Count -ne 1) { Fail 'Connect exactly one device, in bootloader fastboot or authorized ADB.' }
     if ($devices.Count -eq 0) {
         if ($adbDevices[0] -notmatch '^(\S+)\s+(device|recovery)\s*$') { Fail 'Authorize ADB or enter bootloader fastboot manually.' }
@@ -246,6 +277,14 @@ function Connect-Device {
         Wait-Fastboot
     } else { $script:Serial = $devices[0] }
     Check-Bootloader
+}
+
+function Get-AdbDevices {
+    foreach ($line in (Invoke-Tool $Adb @('devices') -Quiet)) {
+        if ($line -match '^\S+\s+(device|recovery|offline|unauthorized|sideload)\s*$') { $line }
+        elseif ($line -match '^List of devices attached\s*$|^\* daemon' -or -not $line.Trim()) { continue }
+        else { Fail "Unexpected adb devices output (check USB permissions): $line" }
+    }
 }
 
 function Check-Bootloader {
@@ -280,7 +319,7 @@ function Start-ResizeRecovery {
     if (-not (Test-Path -LiteralPath $backup -PathType Leaf) -or (Get-Item -LiteralPath $backup).Length -eq 0) { Fail 'The GPT backup was not saved on the computer.' }
     if ((Get-FileHash -LiteralPath $backup -Algorithm SHA256).Hash -ne $hash) { Fail 'The computer GPT backup does not match the recovery backup.' }
     Set-Content -LiteralPath ($backup + '.sha256') -Value $hash -Encoding ASCII
-    Write-Detail "Verified GPT backup saved: $backup"
+    Write-Host (Get-Text 'backupPath' @($backup))
     return $hash
 }
 

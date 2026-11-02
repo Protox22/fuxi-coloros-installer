@@ -15,6 +15,8 @@ KEYS = ('format', 'name', 'base_firmware', 'super_sparse_bytes',
         'super_expanded_bytes', 'super_sha256', 'extra_images')
 EXTRAS = ('boot', 'init_boot', 'vendor_boot', 'dtbo')
 REQUIRED = (
+    'scripts/status.ps1', 'scripts/status.sh', 'support-report.ps1', 'support-report.sh', 'START.sh', 'check-base.sh', 'scripts/menu.sh', 'scripts/language.sh', 'scripts/process.ps1',
+    'scripts/builds.ps1', 'scripts/builds.sh', 'QUICK_START.txt',
     'FLASH.bat', 'scripts/menu.ps1', 'scripts/language.ps1', 'check-base.ps1', 'flash.ps1', 'flash.sh',
     'restore-super.ps1', 'restore-super.sh', 'scripts/common.ps1',
     'scripts/common.sh', 'scripts/prepare-super.sh', 'images/recovery.img',
@@ -350,7 +352,7 @@ def prepare(root, name=None, base_firmware=None, extra_images=None, installer_on
         seen = set()
         for path in sorted(root.rglob('*')):
             relative = path.relative_to(root)
-            if relative.parts[0] in ('logs', 'backups', '__pycache__') or '__pycache__' in relative.parts or path.name in ('SHA256SUMS.txt', '.installer.lock'):
+            if relative.parts[0] in ('logs', 'backups', 'reports', '__pycache__') or '__pycache__' in relative.parts or path.name in ('SHA256SUMS.txt', '.installer.lock'):
                 continue
             require(not path.is_symlink(), 'Symlinks are not supported: ' + str(relative))
             if not path.is_file():

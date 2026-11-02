@@ -9,6 +9,7 @@
 !/tests/
 !/docs/
 !/releases/
+!/.github/
 *.img*
 *.zst*
 *.exe*
@@ -21,10 +22,12 @@
 *.log
 **/logs/
 **/backups/
+**/reports/
 **/.installer.lock
 **/__pycache__/
 *.pyc
 /tests/.work/
+/tests/.work-*.txt
 /releases/*
 !/releases/README.md
 !/releases/SHA256SUMS.txt

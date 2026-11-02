@@ -41,6 +41,7 @@ for old, new in replacements.items():
 (WORK / 'prepare-test.sh').write_text(script, newline='\n')
 fake = WORK / 'sgdisk'
 fake.write_text(f'#!/usr/bin/env bash\nexport LC_ALL=C.UTF-8\nexec "{Path(sys.executable).as_posix()}" "{(BASE / "mock_gpt.py").as_posix()}" "$@"\n', encoding='utf-8', newline='\n')
+fake.chmod(0o755)
 runner = WORK / 'run.sh'
 runner.write_text('''#!/usr/bin/env bash
 set -eu

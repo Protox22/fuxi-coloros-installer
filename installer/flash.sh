@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ "$#" -eq 0 ] || [ "${1:-}" = --menu ]; then
+    exec bash "$ROOT_DIR/scripts/menu.sh" "${@:2}"
+fi
+if [ "${1:-}" = --help ] || [ "${1:-}" = -h ]; then
+    printf 'Usage: bash flash.sh [--menu | --clean | --update | --verify-only [--installer-only]] [--language ru|en|pl]\n'
+    printf 'Optional build: --build ksu|no-root (first argument). No arguments opens the wizard.\n'
+    exit 0
+fi
 if [ "${1:-}" = --build ]; then
     source "$ROOT_DIR/scripts/builds.sh"
     run_selected_build "$ROOT_DIR" "${2:-}" "${@:3}"
@@ -9,6 +17,7 @@ fi
 source "$(cd "$(dirname "$0")" && pwd)/scripts/common.sh"
 
 expand_super_image() {
+    record_event phase.unpack started
     local candidate directory free_kb
     local required_bytes=$((SUPER_SPARSE_BYTES + 1073741824))
     for candidate in "${TMPDIR:-/tmp}" "${HOME:-/tmp}/.cache" "$ROOT"; do
@@ -20,9 +29,10 @@ expand_super_image() {
         SUPER_IMAGE="$directory/super.img"
         break
     done
-    [ -n "$SUPER_IMAGE" ] || fail 'At least 10.4 GiB free in writable TMPDIR, ~/.cache or release directory is required.'
+    [ -n "$SUPER_IMAGE" ] || fail "Free space of $required_bytes bytes is required in writable TMPDIR, ~/.cache or release directory."
+    step unpacking
     printf 'Unpacking super.img.zst to %s\n' "$SUPER_IMAGE"
-    "$ZSTD" -q -d --no-sparse -o "$SUPER_IMAGE" "$IMAGES/super.img.zst" || fail 'zstd decompression failed.'
+    timeout --foreground --kill-after=5 1800 "$ZSTD" -q -d --no-sparse -o "$SUPER_IMAGE" "$IMAGES/super.img.zst" || fail 'zstd decompression failed or timed out.'
     local size
     size="$(wc -c < "$SUPER_IMAGE")" || fail 'Cannot read the unpacked image.'
     [ "$size" -eq "$SUPER_SPARSE_BYTES" ] && [ "$(hash_file "$SUPER_IMAGE")" = "$SUPER_SHA256" ] ||
@@ -32,19 +42,28 @@ expand_super_image() {
 
 main() {
     INSTALLER_ONLY=0 UPDATE=0 VERIFY_ONLY=0
+    local clean=0
     while [ "$#" -gt 0 ]; do
         case "$1" in
             --update) UPDATE=1 ;;
+            --clean) clean=1 ;;
+            --compact) COMPACT=1 ;;
+            --language) shift; LANGUAGE="${1:-}"; case "$LANGUAGE" in ru|en|pl) ;; *) fail 'Use --language ru|en|pl.' ;; esac ;;
             --verify-only) VERIFY_ONLY=1 ;;
             --installer-only) INSTALLER_ONLY=1 ;;
-            *) fail 'Usage: bash flash.sh [--build ksu|no-root] [--update] [--verify-only [--installer-only]]' ;;
+            *) fail 'Usage: bash flash.sh [--build ksu|no-root] [--clean | --update | --verify-only [--installer-only]]' ;;
         esac
         shift
     done
     [ "$INSTALLER_ONLY" = 0 ] || [ "$VERIFY_ONLY" = 1 ] || fail '--installer-only requires --verify-only.'
+    [ "$((clean + UPDATE + VERIFY_ONLY))" -eq 1 ] || fail 'Select exactly one mode: --clean, --update or --verify-only.'
     start_session flash
+    step checkingFiles
     verify_payload
-    if [ "$VERIFY_ONLY" = 1 ]; then printf 'Payload verification completed. No device commands were run.\n'; return; fi
+    if [ "$VERIFY_ONLY" = 1 ]; then
+        if [ ! -f "$IMAGES/super.img.zst" ]; then get_text partialVerified; else get_text verified; fi
+        return
+    fi
     NEED_ZSTD=1
     find_tools
     if [ "$UPDATE" = 1 ]; then
@@ -52,25 +71,37 @@ main() {
     else
         printf '%s FULL installer for Xiaomi 13 fuxi. Clean install: all userdata is erased.\n' "$FIRMWARE_NAME"
     fi
-    printf 'Required starting firmware: Xiaomi Global %s, active slot A.\n' "$REQUIRED_FIRMWARE"
+    get_text requiredBase "$REQUIRED_FIRMWARE" "$([ "$UPDATE" = 1 ] && printf A || printf A/B)"
     printf 'Extra images explicitly selected: %s. Unlisted boot images are retained.\n' "${EXTRA_IMAGES[*]}"
     printf 'Fastboot cannot prove the firmware version of retained boot images.\n'
+    get_text connectHelp
+    step checkingDevice
+    if [ "$UPDATE" = 0 ]; then ALLOWED_BOOT_SLOTS='a b'; fi
     connect_device
+    EXPECTED_BOOT_SLOT="$CHECKED_BOOT_SLOT"
     local super_size confirmation
     super_size="$(get_super_size)"
     [ "$super_size" = "$STOCK_SUPER" ] || [ "$super_size" = "$EXPANDED_SUPER" ] || fail "Unsupported physical super size: $super_size"
+    if [ "$EXPECTED_BOOT_SLOT" = b ] && [ "$super_size" = "$STOCK_SUPER" ]; then
+        fail 'Starting from B requires an existing 11 GiB super. The 9 GiB resize path requires A; no device writes were performed.'
+    fi
     check_extra_images
     check_required_images
+    step summary
+    get_text firmwareLabel "$FIRMWARE_NAME"
+    get_text phoneSummary "$EXPECTED_BOOT_SLOT" "$([ "$super_size" = "$STOCK_SUPER" ] && printf 9 || printf 11)"
     if [ "$UPDATE" = 1 ]; then
         [ "$super_size" = "$EXPANDED_SUPER" ] || fail 'Update without wiping requires an existing 11 GiB super and slot A. No device writes were performed.'
-        confirm 'This requires the same already installed compatible ColorOS port. Update while keeping userdata and metadata?' || fail 'Cancelled before flashing.'
+        get_text updateAdvice
+        confirm "$(get_text confirmUpdate)" || { get_text cancelled; return 2; }
     else
-        confirm 'This permanently erases userdata. Install?' || fail 'Cancelled before flashing.'
+        [ "$super_size" != "$STOCK_SUPER" ] || get_text resizePlan
+        confirm "$(get_text baseConsent "$REQUIRED_FIRMWARE")" || { get_text cancelled; return 2; }
     fi
     expand_super_image
     if [ "$UPDATE" = 0 ] && [ "$super_size" = "$STOCK_SUPER" ]; then
         start_resize_recovery
-        confirm 'Verified GPT backup saved; recovery/AVB already written. Change GPT?' || fail 'Cancelled before changing GPT. Recovery/AVB have already been written; the device remains in TWRP.'
+        confirm "$(get_text confirmResize)" || fail 'Cancelled before changing GPT. Recovery/AVB have already been written; the device remains in TWRP.'
         resize_super apply
     fi
     check_bootloader
@@ -84,16 +115,17 @@ main() {
     if [ "$UPDATE" = 0 ]; then
         invoke_fastboot erase userdata
         invoke_fastboot erase metadata
+        check_bootloader
+        step activate
+        invoke_fastboot set_active a
+        EXPECTED_BOOT_SLOT=a ALLOWED_BOOT_SLOTS=a
     fi
     check_bootloader
     invoke_fastboot reboot
-    if ! rm -f "$SUPER_IMAGE" || ! rmdir "$(dirname "$SUPER_IMAGE")"; then
-        printf 'Flashing finished; temporary image cleanup failed: %s\n' "$SUPER_IMAGE" >&2
-    fi
     if [ "$UPDATE" = 1 ]; then
-        printf 'Update commands completed without erase or GPT resize; userdata and metadata retained. Android startup and data accessibility are not verified.\n'
+        get_text updateDone
     else
-        printf 'Fastboot commands completed; reboot requested. Android startup has not been verified. Slot A was retained.\n'
+        get_text installDone
     fi
 }
 main "$@"
