@@ -30,6 +30,7 @@ main() {
     local super_size confirmation
     super_size="$(get_super_size)"
     if [ "$super_size" = "$STOCK_SUPER" ]; then
+        check_incomplete_restore
         get_text alreadyStock
         return
     fi
@@ -38,12 +39,17 @@ main() {
     get_text eraseCurrent
     get_text prepareStock
     confirm "$(get_text confirmRestore)" || { get_text cancelled; return 2; }
+    write_restore_state gpt.restore
     start_resize_recovery
     confirm "$(get_text confirmShrink)" || fail 'Cancelled before changing GPT. Recovery/AVB have already been written; the device remains in TWRP.'
     resize_super restore
+    write_restore_state flash.recovery_a
     invoke_fastboot flash recovery_a "$IMAGES/recovery.img"
+    write_restore_state erase.userdata
     invoke_fastboot erase userdata
+    write_restore_state erase.metadata
     invoke_fastboot erase metadata
+    clear_restore_state
     get_text restoreDone
     get_text installOfficial
 }

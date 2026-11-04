@@ -7,11 +7,12 @@ import sys
 
 state_path = Path(os.environ['FUXI_TEST_STATE'])
 state = json.loads(state_path.read_text())
+serial = state.get('serial', 'TEST-SERIAL')
 kind, *args = sys.argv[1:]
 with Path(os.environ['FUXI_TEST_LOG']).open('a', encoding='utf-8') as log:
     log.write(json.dumps([kind, *args]) + '\n')
 if args[:1] == ['-s']:
-    if args[1] != 'TEST-SERIAL':
+    if args[1] != serial:
         print('Unexpected device serial', file=sys.stderr)
         sys.exit(1)
     args = args[2:]
@@ -29,9 +30,9 @@ if kind == 'fastboot':
         elif case == 'no-devices' or state.get('adb_mode'):
             pass
         elif case == 'many-fastboot':
-            print('TEST-SERIAL\tfastboot\nSECOND\tfastboot')
+            print(serial + '\tfastboot\nSECOND\tfastboot')
         else:
-            print('TEST-SERIAL\tfastboot')
+            print(serial + '\tfastboot')
     elif args[:1] == ['getvar']:
         values = {'product': 'other' if case == 'wrong-product' else 'fuxi',
                   'current-slot': state.get('slot', 'a'),
@@ -75,6 +76,10 @@ if kind == 'fastboot':
         code = 1
     elif args[:2] == ['erase', 'metadata'] and case == 'erase-failed':
         code = 1
+    elif args[:2] == ['erase', 'userdata'] and case == 'userdata-erase-failed':
+        code = 1
+    elif args[:2] == ['flash', 'recovery_a'] and case == 'restored-recovery-failed' and size == '0x240000000':
+        code = 1
     elif args[:2] == ['flash', 'boot_a'] and case == 'extra-write-failed':
         code = 1
 elif kind == 'adb':
@@ -83,7 +88,7 @@ elif kind == 'adb':
         if case == 'adb-permissions': print('????????????\tno permissions (udev rules missing)')
         if case == 'adb-garbage': print('unrecognized output')
         if state.get('adb_mode'):
-            print('TEST-SERIAL\t' + ('unauthorized' if case == 'base-unauthorized' else 'device'))
+            print(serial + '\t' + ('unauthorized' if case == 'base-unauthorized' else 'device'))
         if case == 'mixed-devices':
             print('OTHER\tdevice')
     elif args == ['reboot', 'bootloader']:

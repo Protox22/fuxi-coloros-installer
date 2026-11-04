@@ -37,6 +37,10 @@ FUXI / COLOROS 2.6 — Xiaomi 13 (fuxi) — Port by tomekcz
 Ошибка SHA-256: распакуйте правильный комплект заново; не пересчитывайте
 суммы ради обхода проверки. Сохраните logs/*.log и, если есть, backups/.
 После частичной записи не продолжайте вручную с середины.
+Если повторный restore сообщает о незавершённых этапах, сохраните GPT-копии
+и установите правильную официальную fastboot-прошивку fuxi перед загрузкой Android.
+Не удаляйте файл restore-state для обхода ошибки. Общая блокировка телефона
+и порядок действий после аварии описаны в README_RU.txt.
 Пункт 2 — только возврат размера super к 9 ГиБ. Он стирает данные и требует
 последующей установки официальной прошивки. Это не способ исправить любой сбой.
 
@@ -52,6 +56,10 @@ Use a data cable, disconnect other phones, authorize Android USB debugging
 or enter fastboot with power + volume down. Windows needs a fastboot driver.
 Logs: logs/. GPT backups: backups/ (partition table, not personal files).
 On error keep the log; do not bypass checks or resume halfway through writes.
+An unfinished restore blocks a repeated 9 GiB restore without erasing anything.
+Keep GPT backups and install the correct official fuxi fastboot ROM before booting
+Android. Do not delete restore-state to bypass the error. Shared device locks
+and crash recovery instructions are in README_RU.txt.
 Confirm Android startup and data accessibility on the phone after reboot.
 
 POLSKI
@@ -66,6 +74,9 @@ Windows: sprawdź sterownik fastboot. Użyj kabla danych i odłącz inne telefon
 Fastboot: zasilanie + ciszej. Android: włącz i autoryzuj debugowanie USB.
 Dzienniki: logs/. Kopie GPT: backups/ (nie zawierają plików osobistych).
 Przy błędzie zachowaj dziennik. Nie pomijaj kontroli i nie kontynuuj od środka.
+Nieukończone przywracanie blokuje ponowną operację przy 9 GiB bez kasowania danych.
+Zachowaj kopie GPT i zainstaluj właściwy oficjalny fastboot ROM fuxi przed startem
+Androida. Nie usuwaj restore-state, aby ominąć błąd. Blokady opisuje README_RU.txt.
 Po restarcie sprawdź uruchomienie Androida oraz dostęp do danych.
 
 USB setup reference: https://developer.android.com/studio/run/device

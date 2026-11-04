@@ -11,6 +11,9 @@ EXPANDED_SUPER=0x2c0000000
 SERIAL=''
 SUPER_IMAGE=''
 LOCK_OWNED=0
+DEVICE_LOCK=''
+DEVICE_LOCK_OWNED=0
+RESTORE_STATE=''
 ALLOWED_BOOT_SLOTS='a'
 EXPECTED_BOOT_SLOT=''
 CHECKED_BOOT_SLOT=''
@@ -37,7 +40,7 @@ show_error_hint() {
 
 fail() {
     printf '\n%s: %s\n' "$(get_text error)" "$*" >&2
-    show_error_hint "$*"
+    show_error_hint "$*" || printf 'Could not write the error journal.\n' >&2
     [ -z "$SESSION_LOG" ] || get_text logPath "$SESSION_LOG" >&2
     exit 1
 }
@@ -162,16 +165,85 @@ read_firmware_profile() {
 finish_session() {
     local code=${1:-$?}
     trap - EXIT
-    case "$code" in 0) record_event result finished ;; 2) record_event result cancelled ;; *) show_failure_state ;; esac
+    # Cleanup must run even when the journal, console or an earlier cleanup fails.
+    set +e
+    case "$code" in
+        0) record_event result finished ;;
+        2) record_event result cancelled ;;
+        *) show_failure_state ;;
+    esac || printf 'Could not write the final session status.\n' >&2
     if [ -n "$SUPER_IMAGE" ]; then
         # Only the exact file/directory created by mktemp in this process.
-        if rm -f -- "$SUPER_IMAGE" && rmdir -- "$(dirname "$SUPER_IMAGE")"; then get_text tempRemoved; fi
+        if rm -f -- "$SUPER_IMAGE" && rmdir -- "$(dirname "$SUPER_IMAGE")"; then get_text tempRemoved
+        else printf 'Temporary image cleanup failed: %s\n' "$SUPER_IMAGE" >&2; fi
     fi
     [ "$code" = 0 ] || [ -z "$SESSION_LOG" ] || get_text logPath "$SESSION_LOG" >&2
     if [ "$LOCK_OWNED" = 1 ]; then
         rm -f "$ROOT/.installer.lock" || printf 'Could not remove .installer.lock; see README_RU.txt.\n' >&2
     fi
+    # The device stays reserved until all other cleanup has been attempted.
+    if [ "$DEVICE_LOCK_OWNED" = 1 ]; then
+        rm -f -- "$DEVICE_LOCK" || printf 'Could not remove device lock: %s\n' "$DEVICE_LOCK" >&2
+    fi
     exit "$code"
+}
+
+acquire_device_lock() {
+    local directory key
+    [ "$DEVICE_LOCK_OWNED" = 0 ] || fail 'A device lock is already held.'
+    [ -n "$SERIAL" ] || fail 'Cannot lock a device without its serial.'
+    if [ "${OS:-}" = Windows_NT ]; then
+        [ -n "${LOCALAPPDATA:-}" ] || fail 'LOCALAPPDATA is required for the shared device lock.'
+        directory="$(cygpath -u "$LOCALAPPDATA")/FuxiInstaller/devices"
+    else
+        directory="${XDG_STATE_HOME:-${HOME:?HOME is required}/.local/state}/FuxiInstaller/devices"
+    fi
+    (umask 077; mkdir -p -- "$directory") || fail 'Cannot create the shared device state directory.'
+    [ ! -L "$directory" ] && [ -d "$directory" ] || fail 'Unsafe device state directory.'
+    if command -v sha256sum >/dev/null 2>&1; then
+        key="$(printf '%s' "$SERIAL" | sha256sum | awk '{print $1}')"
+    else
+        key="$(printf '%s' "$SERIAL" | shasum -a 256 | awk '{print $1}')"
+    fi
+    [[ "$key" =~ ^[0-9a-f]{64}$ ]] || fail 'Cannot compute the device lock key.'
+    DEVICE_LOCK="$directory/$key.lock"
+    RESTORE_STATE="$directory/$key.restore-state"
+    # Same CreateNew protocol as PowerShell, including Git Bash on Windows.
+    (umask 077; set -o noclobber; printf 'pid=%s\n' "$$" > "$DEVICE_LOCK") 2>/dev/null ||
+        fail "$(get_text deviceBusy "$DEVICE_LOCK")"
+    DEVICE_LOCK_OWNED=1
+}
+
+write_restore_state() {
+    local temporary
+    [ "$DEVICE_LOCK_OWNED" = 1 ] && [ -n "$RESTORE_STATE" ] || fail 'Restore state requires the device lock.'
+    [ ! -L "$RESTORE_STATE" ] || fail 'Linked restore state is not supported.'
+    [ ! -e "$RESTORE_STATE" ] || [ -f "$RESTORE_STATE" ] || fail 'Invalid restore state file.'
+    case "$1" in gpt.restore|flash.recovery_a|erase.userdata|erase.metadata) ;; *) fail 'Invalid restore stage.' ;; esac
+    temporary="$(mktemp "$RESTORE_STATE.XXXXXXXX")" || fail 'Cannot create restore state.'
+    if ! { printf '%s\n' "$1" > "$temporary" && mv -fT -- "$temporary" "$RESTORE_STATE"; }; then
+        rm -f -- "$temporary" || true
+        fail 'Cannot save restore state; no further device commands will run.'
+    fi
+}
+
+check_incomplete_restore() {
+    local stage pending
+    [ -e "$RESTORE_STATE" ] || [ -L "$RESTORE_STATE" ] || return 0
+    stage=''
+    if [ -f "$RESTORE_STATE" ] && [ ! -L "$RESTORE_STATE" ]; then stage="$(cat "$RESTORE_STATE")" || stage=''; fi
+    case "$stage" in
+        gpt.restore) pending='gpt.restore, flash.recovery_a, erase.userdata, erase.metadata' ;;
+        flash.recovery_a) pending='flash.recovery_a, erase.userdata, erase.metadata' ;;
+        erase.userdata) pending='erase.userdata, erase.metadata' ;;
+        erase.metadata) pending='erase.metadata' ;;
+        *) pending='UNKNOWN: gpt.restore, flash.recovery_a, erase.userdata, erase.metadata' ;;
+    esac
+    fail "$(get_text restoreIncomplete "$pending" "$RESTORE_STATE")"
+}
+
+clear_restore_state() {
+    rm -f -- "$RESTORE_STATE" || fail 'Cannot clear completed restore state.'
 }
 
 start_session() {
@@ -330,10 +402,12 @@ connect_device() {
         [ "$state" = device ] || [ "$state" = recovery ] || fail 'Authorize ADB or enter bootloader fastboot manually.'
         product="$(invoke_adb shell getprop ro.product.device | tr -d '\r\n')" || return 1
         [ "$product" = fuxi ] || fail "Connected ADB device is not fuxi: $product"
+        acquire_device_lock
         invoke_adb reboot bootloader
         wait_fastboot
     else
         SERIAL="$fb"
+        acquire_device_lock
     fi
     check_bootloader
 }
