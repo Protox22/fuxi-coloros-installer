@@ -36,7 +36,7 @@ run('translations', [sys.executable, 'tools/generate_messages.py', '--check'])
 bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')
 for path in (ROOT / 'installer').rglob('*.sh'):
     run('syntax-' + path.stem, [bash, '-n', str(path)], 30)
-for name in ('hosts', 'integrity', 'ui', 'readiness', 'payload', 'packaging', 'platform', 'recovery_legacy', 'recovery_gpt31'):
+for name in ('hosts', 'integrity', 'ui', 'readiness', 'session_safety', 'payload', 'packaging', 'platform', 'recovery_legacy', 'recovery_gpt31'):
     run(name, [sys.executable, 'tests/test_' + name + '.py'])
 sources = {}
 for directory in ('installer', 'tests', 'tools'):

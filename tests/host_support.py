@@ -66,6 +66,12 @@ def environment(directory, case='valid', **state):
                FUXI_TEST_PYTHON=sys.executable, FUXI_TEST_MOCK=str(BASE / 'mock_device.py'),
                FASTBOOT=(TOOLS / 'fastboot').as_posix(), ADB=(TOOLS / 'adb').as_posix(), ZSTD=(TOOLS / 'zstd').as_posix(),
                LANGUAGE='en', PYTHONIOENCODING='utf-8')
+    # Each synthetic device is isolated by default. Concurrency/retry tests
+    # explicitly share this user state across different release directories.
+    user_state = directory / 'user-state'
+    user_state.mkdir(exist_ok=True)
+    env['XDG_STATE_HOME'] = str(user_state)
+    env['LOCALAPPDATA'] = str(user_state)
     if os.name == 'nt':
         env['PSMODULEPATH'] = str(PS.parent / 'Modules')
     return env, calls_file

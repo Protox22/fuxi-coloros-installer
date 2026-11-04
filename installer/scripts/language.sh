@@ -41,6 +41,7 @@ get_text() {
         ru:confirmUpdate) value='Уже установлен этот же совместимый порт ColorOS. Обновить, сохранив данные?' ;;
         ru:connectHelp) value='Подключите один телефон: fastboot (питание + громкость вниз) или Android с разрешённой USB-отладкой.' ;;
         ru:customWarning) value='Для кастомной ОС или изменённых boot-образов совпадения недостаточно.' ;;
+        ru:deviceBusy) value='Телефон занят другим установщиком либо осталась аварийная блокировка: {0}. Перед удалением прочтите README_RU.txt.' ;;
         ru:diagFastboot) value='Fastboot: модель {0}; слот {1}; разблокирован: {2}; fastbootd: {3}; super: {4}.' ;;
         ru:diagnose) value='Быстрая проверка готовности / базы' ;;
         ru:diskSpace) value='Свободное место для распаковки' ;;
@@ -94,6 +95,7 @@ get_text() {
         ru:resizePlan) value='Потребуется расширение super 9 → 11 ГиБ с отдельным подтверждением после копии GPT.' ;;
         ru:restore) value='Дополнительно: вернуть super к 9 ГиБ (стирание)' ;;
         ru:restoreDone) value='Готово: super 9 ГиБ. Телефон оставлен в fastboot.' ;;
+        ru:restoreIncomplete) value='Восстановление не завершено. Этапы, требующие восстановления: {0}. Автоматического стирания или продолжения нет. Сохраните копии GPT и установите правильную официальную прошивку fuxi перед загрузкой Android. Состояние: {1}.' ;;
         ru:restoreTitle) value='Возврат super к 9 ГиБ. Затем нужна официальная прошивка.' ;;
         ru:returnMenu) value='Enter — вернуться в меню' ;;
         ru:spaceProbe) value='Доступ на запись и фактическая распаковка проверяются при установке.' ;;
@@ -151,6 +153,7 @@ get_text() {
         en:confirmUpdate) value='The same compatible ColorOS port is already installed. Update while keeping data?' ;;
         en:connectHelp) value='Connect one phone: fastboot (power + volume down) or Android with authorized USB debugging.' ;;
         en:customWarning) value='Matching properties are insufficient for a custom OS or modified boot images.' ;;
+        en:deviceBusy) value='The device is reserved by another installer, or a stale lock remains: {0}. See README_RU.txt before removing it.' ;;
         en:diagFastboot) value='Fastboot: model {0}; slot {1}; unlocked: {2}; fastbootd: {3}; super: {4}.' ;;
         en:diagnose) value='Quick readiness / base check' ;;
         en:diskSpace) value='Free space for unpacking' ;;
@@ -204,6 +207,7 @@ get_text() {
         en:resizePlan) value='Super must be expanded from 9 to 11 GiB, with a separate confirmation after the GPT backup.' ;;
         en:restore) value='Advanced: restore super to 9 GiB (erase data)' ;;
         en:restoreDone) value='Done: super is 9 GiB. The phone remains in fastboot.' ;;
+        en:restoreIncomplete) value='Unfinished restore. Stages requiring recovery: {0}. No automatic erase or resume. Keep GPT backups and install the correct official fuxi firmware before booting Android. State: {1}.' ;;
         en:restoreTitle) value='Restoring super to 9 GiB. Official firmware is required afterwards.' ;;
         en:returnMenu) value='Enter — return to the menu' ;;
         en:spaceProbe) value='Write access and actual extraction are checked during installation.' ;;
@@ -261,6 +265,7 @@ get_text() {
         pl:confirmUpdate) value='Ten sam zgodny port ColorOS jest już zainstalowany. Aktualizować z zachowaniem danych?' ;;
         pl:connectHelp) value='Podłącz jeden telefon: fastboot (zasilanie + ciszej) lub Android z autoryzowanym debugowaniem USB.' ;;
         pl:customWarning) value='Zgodne właściwości nie wystarczają dla innego systemu lub zmienionych obrazów boot.' ;;
+        pl:deviceBusy) value='Urządzenie jest zajęte przez inny instalator lub pozostała blokada po awarii: {0}. Przed usunięciem przeczytaj README_RU.txt.' ;;
         pl:diagFastboot) value='Fastboot: model {0}; slot {1}; odblokowany: {2}; fastbootd: {3}; super: {4}.' ;;
         pl:diagnose) value='Szybka kontrola gotowości / bazy' ;;
         pl:diskSpace) value='Wolne miejsce do rozpakowania' ;;
@@ -314,6 +319,7 @@ get_text() {
         pl:resizePlan) value='Wymagane powiększenie super z 9 do 11 GiB, z osobnym potwierdzeniem po kopii GPT.' ;;
         pl:restore) value='Zaawansowane: przywróć super do 9 GiB (usuwa dane)' ;;
         pl:restoreDone) value='Gotowe: super ma 9 GiB. Telefon pozostaje w fastboot.' ;;
+        pl:restoreIncomplete) value='Przywracanie nie zostało ukończone. Etapy wymagające odzyskania: {0}. Bez automatycznego kasowania lub wznawiania. Zachowaj kopie GPT i zainstaluj właściwy oficjalny system fuxi przed uruchomieniem Androida. Stan: {1}.' ;;
         pl:restoreTitle) value='Przywracanie super do 9 GiB. Potem wymagany jest oficjalny system.' ;;
         pl:returnMenu) value='Enter — powrót do menu' ;;
         pl:spaceProbe) value='Dostęp do zapisu i rozpakowanie są sprawdzane przy instalacji.' ;;

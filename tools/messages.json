@@ -109,7 +109,9 @@
     "cleanTechnical": "Slot/size/unlock for clean installation",
     "updateTechnical": "Slot/size/unlock for update",
     "reportCreated": "Report saved: {0}. You can inspect the ZIP before sharing.",
-    "toolsAvailable": "Installation tools"
+    "toolsAvailable": "Installation tools",
+    "deviceBusy": "The device is reserved by another installer, or a stale lock remains: {0}. See README_RU.txt before removing it.",
+    "restoreIncomplete": "Unfinished restore. Stages requiring recovery: {0}. No automatic erase or resume. Keep GPT backups and install the correct official fuxi firmware before booting Android. State: {1}."
   },
   "pl": {
     "exit": "Wyjście / Enter",
@@ -221,7 +223,9 @@
     "cleanTechnical": "Slot/rozmiar/odblokowanie dla czystej instalacji",
     "updateTechnical": "Slot/rozmiar/odblokowanie dla aktualizacji",
     "reportCreated": "Raport zapisano: {0}. Możesz sprawdzić ZIP przed wysłaniem.",
-    "toolsAvailable": "Narzędzia instalacji"
+    "toolsAvailable": "Narzędzia instalacji",
+    "deviceBusy": "Urządzenie jest zajęte przez inny instalator lub pozostała blokada po awarii: {0}. Przed usunięciem przeczytaj README_RU.txt.",
+    "restoreIncomplete": "Przywracanie nie zostało ukończone. Etapy wymagające odzyskania: {0}. Bez automatycznego kasowania lub wznawiania. Zachowaj kopie GPT i zainstaluj właściwy oficjalny system fuxi przed uruchomieniem Androida. Stan: {1}."
   },
   "ru": {
     "exit": "Выход / Enter",
@@ -333,6 +337,8 @@
     "cleanTechnical": "Слот/размер/разблокировка для чистой установки",
     "updateTechnical": "Слот/размер/разблокировка для обновления",
     "reportCreated": "Отчёт сохранён: {0}. Перед отправкой можно открыть ZIP и проверить содержимое.",
-    "toolsAvailable": "Инструменты установки"
+    "toolsAvailable": "Инструменты установки",
+    "deviceBusy": "Телефон занят другим установщиком либо осталась аварийная блокировка: {0}. Перед удалением прочтите README_RU.txt.",
+    "restoreIncomplete": "Восстановление не завершено. Этапы, требующие восстановления: {0}. Автоматического стирания или продолжения нет. Сохраните копии GPT и установите правильную официальную прошивку fuxi перед загрузкой Android. Состояние: {1}."
   }
 }

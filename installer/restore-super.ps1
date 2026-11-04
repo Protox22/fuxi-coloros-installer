@@ -17,6 +17,7 @@ try {
     Connect-Device
     $superSize = Get-SuperSize
     if ($superSize -eq $StockSuper) {
+        Check-IncompleteRestore
         if ($Compact) { Write-Host ('  ' + (Get-Text 'alreadyStock')) -ForegroundColor Green }
         else { Write-Host 'Super is already 9 GiB. No partition writes or erases were performed.' }
         $script:SessionOutcome = 'finished'
@@ -31,13 +32,18 @@ try {
         Write-Host ('  ' + (Get-Text 'prepareStock')) -ForegroundColor Yellow
     }
     if (-not (Read-Confirmation 'Restore stock super size and erase data?' (Get-Text 'confirmRestore'))) { Write-Host (Get-Text 'cancelled'); $script:SessionOutcome = 'cancelled'; exit 2 }
+    Write-RestoreState 'gpt.restore'
     $backupHash = Start-ResizeRecovery
     if (-not (Read-Confirmation 'Verified GPT backup saved; recovery/AVB already written. Restore the stock GPT boundary?' (Get-Text 'confirmShrink'))) { Fail 'Cancelled before changing GPT. Recovery/AVB have already been written; the device remains in TWRP.' }
     Resize-Super 'restore' $backupHash
+    Write-RestoreState 'flash.recovery_a'
     [void](Invoke-Fastboot @('flash', 'recovery_a', 'images/recovery.img'))
     Write-Step (Get-Text 'wipe')
+    Write-RestoreState 'erase.userdata'
     [void](Invoke-Fastboot @('erase', 'userdata'))
+    Write-RestoreState 'erase.metadata'
     [void](Invoke-Fastboot @('erase', 'metadata'))
+    Clear-RestoreState
     if ($Compact) {
         Write-Host ('  ' + (Get-Text 'restoreDone')) -ForegroundColor Green
         Write-Host ('  ' + (Get-Text 'installOfficial')) -ForegroundColor Yellow

@@ -19,6 +19,9 @@ $ExpandedSuper = '0x2c0000000'
 $Serial = ''
 $SuperImage = $null
 $SessionLock = $null
+$DeviceLock = $null
+$DeviceLockPath = ''
+$RestoreState = ''
 $TranscriptStarted = $false
 $DetailWriter = $null
 $AllowedBootSlots = @('a')
@@ -32,7 +35,7 @@ if (-not (Test-Path Variable:Compact)) { $Compact = $false }
 function Fail([string]$Message) { throw $Message }
 
 function Show-ErrorHint([string]$Message) {
-    Show-FailureState
+    try { Show-FailureState } catch { Write-CleanupError 'Could not write the failure journal.' }
     $key = switch -Regex ($Message) {
         'SHA-256|checksum|missing.*file|firmware.conf' { 'hintFiles'; break }
         'installer.lock' { 'hintLock'; break }
@@ -43,7 +46,7 @@ function Show-ErrorHint([string]$Message) {
         default { 'hintStopped' }
     }
     Write-Host (Get-Text $key) -ForegroundColor Yellow
-    Write-Event 'error' $key
+    try { Write-Event 'error' $key } catch { Write-CleanupError 'Could not write the error journal.' }
     if ($script:SessionLog) { Write-Host (Get-Text 'logPath' @($script:SessionLog)) }
 }
 
@@ -168,24 +171,101 @@ function Start-Session([string]$Operation) {
     Write-Host (Get-Text 'logPath' @($log))
 }
 
+function Write-CleanupError([string]$Message) {
+    # Error reporting must not mask the original exception or stop cleanup.
+    try { [Console]::Error.WriteLine($Message) } catch {}
+}
+
 function Stop-Session {
-    Write-Event 'result' $script:SessionOutcome
+    try { Write-Event 'result' $script:SessionOutcome }
+    catch { Write-CleanupError 'Could not write the final session status.' }
     if ($script:SuperImage) {
         # Delete only the exact temporary file and directory created by this process.
         try {
             if (Test-Path -LiteralPath $script:SuperImage) { Remove-Item -LiteralPath $script:SuperImage -ErrorAction Stop }
             Remove-Item -LiteralPath (Split-Path -Parent $script:SuperImage) -ErrorAction Stop
             Write-Host (Get-Text 'tempRemoved')
-        } catch { Write-Warning "Temporary image cleanup failed: $script:SuperImage" }
+        } catch { Write-CleanupError "Temporary image cleanup failed: $script:SuperImage" }
         $script:SuperImage = $null
     }
-    if ($script:TranscriptStarted) { try { Stop-Transcript | Out-Null } catch {}; $script:TranscriptStarted = $false }
-    if ($null -ne $script:DetailWriter) { $script:DetailWriter.Dispose(); $script:DetailWriter = $null }
+    if ($script:TranscriptStarted) {
+        try { Stop-Transcript | Out-Null } catch { Write-CleanupError 'Could not close the transcript.' }
+        $script:TranscriptStarted = $false
+    }
+    if ($null -ne $script:DetailWriter) {
+        try { $script:DetailWriter.Dispose() } catch { Write-CleanupError 'Could not close the detail log.' }
+        $script:DetailWriter = $null
+    }
     if ($null -ne $script:SessionLock) {
-        $script:SessionLock.Dispose()
+        try { $script:SessionLock.Dispose() } catch { Write-CleanupError 'Could not close the session lock.' }
         $script:SessionLock = $null
         try { Remove-Item -LiteralPath (Join-Path $Root '.installer.lock') -ErrorAction Stop }
-        catch { Write-Warning 'Could not remove the session lock. See README_RU.txt before retrying.' }
+        catch { Write-CleanupError 'Could not remove the session lock. See README_RU.txt before retrying.' }
+    }
+    # Release the device only after every other cleanup has been attempted.
+    if ($null -ne $script:DeviceLock) {
+        try { $script:DeviceLock.Dispose() } catch { Write-CleanupError 'Could not close the device lock.' }
+        $script:DeviceLock = $null
+        try { Remove-Item -LiteralPath $script:DeviceLockPath -ErrorAction Stop }
+        catch { Write-CleanupError "Could not remove device lock: $script:DeviceLockPath" }
+    }
+}
+
+function Acquire-DeviceLock {
+    if ($null -ne $script:DeviceLock -or -not $script:Serial) { Fail 'A selected, unlocked device session is required.' }
+    if (-not $env:LOCALAPPDATA) { Fail 'LOCALAPPDATA is required for the shared device lock.' }
+    $directory = Join-Path $env:LOCALAPPDATA 'FuxiInstaller/devices'
+    New-Item -ItemType Directory -Force -Path $directory | Out-Null
+    if ((Get-Item -LiteralPath $directory -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) { Fail 'Unsafe device state directory.' }
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try { $key = ([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($script:Serial)))).Replace('-', '').ToLowerInvariant() }
+    finally { $sha.Dispose() }
+    $script:DeviceLockPath = Join-Path $directory ($key + '.lock')
+    $script:RestoreState = Join-Path $directory ($key + '.restore-state')
+    try { $script:DeviceLock = [IO.File]::Open($script:DeviceLockPath, 'CreateNew', 'ReadWrite', 'Read') }
+    catch { Fail (Get-Text 'deviceBusy' @($script:DeviceLockPath)) }
+    $owner = [Text.Encoding]::ASCII.GetBytes("pid=$PID`n")
+    $script:DeviceLock.Write($owner, 0, $owner.Length)
+    $script:DeviceLock.Flush()
+}
+
+function Write-RestoreState([ValidateSet('gpt.restore', 'flash.recovery_a', 'erase.userdata', 'erase.metadata')][string]$Stage) {
+    if ($null -eq $script:DeviceLock -or -not $script:RestoreState) { Fail 'Restore state requires the device lock.' }
+    if ((Test-Path -LiteralPath $script:RestoreState) -and
+        ((Get-Item -LiteralPath $script:RestoreState -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) { Fail 'Linked restore state is not supported.' }
+    $temporary = $script:RestoreState + '.' + [guid]::NewGuid().ToString('N')
+    try {
+        $stream = [IO.File]::Open($temporary, 'CreateNew', 'Write', 'None')
+        try {
+            $data = [Text.Encoding]::ASCII.GetBytes($Stage + "`n")
+            $stream.Write($data, 0, $data.Length)
+            $stream.Flush($true)
+        } finally { $stream.Dispose() }
+        if (Test-Path -LiteralPath $script:RestoreState) { [IO.File]::Replace($temporary, $script:RestoreState, $null) }
+        else { [IO.File]::Move($temporary, $script:RestoreState) }
+    } finally {
+        try { if (Test-Path -LiteralPath $temporary) { Remove-Item -LiteralPath $temporary -ErrorAction Stop } }
+        catch { Write-CleanupError 'Could not remove the temporary restore state.' }
+    }
+}
+
+function Check-IncompleteRestore {
+    if (-not (Test-Path -LiteralPath $script:RestoreState)) { return }
+    $stages = @('gpt.restore', 'flash.recovery_a', 'erase.userdata', 'erase.metadata')
+    $stage = ''
+    try {
+        if (-not ((Get-Item -LiteralPath $script:RestoreState -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+            $stage = [IO.File]::ReadAllText($script:RestoreState).TrimEnd([char[]]"`r`n")
+        }
+    } catch {}
+    $index = [array]::IndexOf($stages, $stage)
+    $pending = if ($index -ge 0) { $stages[$index..($stages.Count - 1)] -join ', ' } else { 'UNKNOWN: ' + ($stages -join ', ') }
+    Fail (Get-Text 'restoreIncomplete' @($pending, $script:RestoreState))
+}
+
+function Clear-RestoreState {
+    if (Test-Path -LiteralPath $script:RestoreState) {
+        Remove-Item -LiteralPath $script:RestoreState -ErrorAction Stop
     }
 }
 
@@ -273,9 +353,10 @@ function Connect-Device {
         $script:Serial = $Matches[1]
         $product = ((Invoke-Adb @('shell', 'getprop', 'ro.product.device')) -join '').Trim()
         if ($product -ne 'fuxi') { Fail "Connected ADB device is not fuxi: $product" }
+        Acquire-DeviceLock
         [void](Invoke-Adb @('reboot', 'bootloader'))
         Wait-Fastboot
-    } else { $script:Serial = $devices[0] }
+    } else { $script:Serial = $devices[0]; Acquire-DeviceLock }
     Check-Bootloader
 }
 
