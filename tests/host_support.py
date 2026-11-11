@@ -36,14 +36,16 @@ def sums(root):
     (root / 'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest() + '  ./' + p.relative_to(root).as_posix() + '\n' for p in sorted(paths)), encoding='ascii')
 
 
-def fixture(root):
+def fixture(root, source=SOURCE):
     root.mkdir(parents=True)
-    names = [line.split('  ./')[1] for line in (SOURCE / 'SHA256SUMS.txt').read_text().splitlines()]
+    names = [line.split('  ./')[1] for line in (source / 'SHA256SUMS.txt').read_text().splitlines()]
     for name in names:
         target = root / name
         target.parent.mkdir(parents=True, exist_ok=True)
         if name.endswith(('.ps1', '.sh', '.bat', '.py', '.txt')) and not name.startswith('bin/'):
-            target.write_bytes((SOURCE / name).read_bytes())
+            target.write_bytes((source / name).read_bytes())
+        elif name == 'boot-variants.conf':
+            target.write_bytes((source / name).read_bytes())
         elif name == 'firmware.conf':
             profile = (SOURCE / name).read_text().splitlines()
             profile = [f'super_sparse_bytes={len(SYNTHETIC)}' if x.startswith('super_sparse_bytes=') else
@@ -53,6 +55,14 @@ def fixture(root):
             shutil.copyfile(TOOLS / target.name, target)
         else:
             target.write_bytes(b'Synthetic payload: ' + name.encode())
+    boot_config = root / 'boot-variants.conf'
+    if boot_config.is_file():
+        lines = boot_config.read_text(encoding='ascii').splitlines()
+        for variant, image in (('ksu', 'boot.img'), ('no_root', 'boot-no-root.img')):
+            checksum = hashlib.sha256((root / 'images' / image).read_bytes()).hexdigest()
+            key = f'{variant}_sha256='
+            lines = [key + checksum if line.startswith(key) else line for line in lines]
+        boot_config.write_text('\n'.join(lines) + '\n', encoding='ascii')
     sums(root)
     return root
 

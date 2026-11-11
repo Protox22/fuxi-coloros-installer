@@ -3,15 +3,16 @@ import json
 from pathlib import Path
 import sys
 from concurrent.futures import ThreadPoolExecutor
-from host_support import HOSTS, WORK, execute, fixture, native
+from host_support import BASE, HOSTS, WORK, execute, fixture, native
 
 results = []
 
 
 def run_case(host, name, *, operation='clean', device='valid', answers='y\ny\n', exit=0,
-        stock=False, slot='a', no_writes=False, no_gpt=False, menu=False, **state):
+        stock=False, slot='a', no_writes=False, no_gpt=False, menu=False, source=None, root_mode=None, **state):
     directory = WORK / (host + '-' + name)
-    root = fixture(directory / 'release & spaces (test)! Кириллица')
+    release = directory / 'release & spaces (test)! Кириллица'
+    root = fixture(release, source) if source else fixture(release)
     options = {'clean': ['-Clean'], 'update': ['-Update'], 'verify': ['-VerifyOnly'], 'restore': [], 'diagnose': []}[operation]
     if host == 'bash': options = [x.replace('-Clean', '--clean').replace('-Update', '--update').replace('-VerifyOnly', '--verify-only') for x in options]
     entry = {'restore': 'restore-super', 'diagnose': 'check-base'}.get(operation, 'flash')
@@ -51,6 +52,10 @@ def run_case(host, name, *, operation='clean', device='valid', answers='y\ny\n',
             checks += [0 <= pull < resize < flash]
     if device == 'twrp-too-large':
         checks += [f'physical partition size: recovery_{slot}' in output]
+    if root_mode:
+        expected_boot = 'boot.img' if root_mode == 'ksu' else 'boot-no-root.img'
+        boot_images = [Path(x[-1]).name for x in fb if x[:2] == ['flash', 'boot_a']]
+        checks += [boot_images == [expected_boot]]
     if operation == 'restore': checks += [not reboot, not any('set_active' in x for x in fb)]
     if rc != 0 and device != 'reboot-failed': checks += [not reboot]
     # Temporary sparse image must be cleaned on success, failure and cancellation.
@@ -108,6 +113,9 @@ for host in HOSTS:
     run(host, 'base-unauthorized', device='base-unauthorized', operation='diagnose', adb_mode=True, exit=1)
     run(host, 'menu-clean', menu=True, answers='1\n1\ny\n0\n')
     run(host, 'menu-update', menu=True, operation='update', answers='1\n2\ny\n0\n')
+    for choice, variant in (('1', 'ksu'), ('2', 'no-root')):
+        run(host, f'r2187-menu-{variant}', menu=True, source=BASE.parent / 'installer-r2187',
+            root_mode=variant, stock=True, slot='b', answers=f'1\n{choice}\n1\ny\ny\n0\n')
     run(host, 'menu-retry-after-cancel', menu=True, answers='1\n1\nn\n1\n1\ny\n0\n')
 
 for future in pending: future.result()

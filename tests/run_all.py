@@ -34,12 +34,16 @@ def run(name, command, timeout=1800):
 
 run('translations', [sys.executable, 'tools/generate_messages.py', '--check'])
 bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')
-for path in (ROOT / 'installer').rglob('*.sh'):
-    run('syntax-' + path.stem, [bash, '-n', str(path)], 30)
+for directory in ('installer', 'installer-r2187'):
+    for path in (ROOT / directory).rglob('*.sh'):
+        label = path.relative_to(ROOT).with_suffix('').as_posix().replace('/', '-')
+        run('syntax-' + label, [bash, '-n', str(path)], 30)
 for name in ('hosts', 'integrity', 'ui', 'readiness', 'session_safety', 'payload', 'packaging', 'platform', 'recovery_legacy', 'recovery_gpt31'):
     run(name, [sys.executable, 'tests/test_' + name + '.py'])
+if os.name != 'nt':
+    run('recovery_r2187', [sys.executable, 'installer-r2187/super-resize/tests/test_prepare.py'])
 sources = {}
-for directory in ('installer', 'tests', 'tools'):
+for directory in ('installer', 'installer-r2187', 'tests', 'tools'):
     for path in (ROOT / directory).rglob('*'):
         if any(part in ('.work', 'logs', 'backups', '__pycache__') for part in path.parts): continue
         if path.is_file() and path.suffix in ('.sh', '.ps1', '.py', '.cs', '.json'):

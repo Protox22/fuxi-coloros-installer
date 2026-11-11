@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "default": "ksu",
+  "common_super_sha256": "dc73cac5211ea95db38435f601d0b108ea1cd99bb0d8e5b554e7a165f7323977",
+  "variants": {
+    "ksu": {
+      "image": "images/boot.img",
+      "bytes": 201326592,
+      "sha256": "1690d88c57cc83f7322ce359c856fd633ec66445cd4353dcf26825486324f9da",
+      "kernel_su_enabled": true,
+      "kernel_config_sha256": "455c9e967759d9d79ebf1f3539c591a6451cd52adea2c6af2331ce8f8546c401",
+      "host_checks_pass": true,
+      "runtime_validated": true
+    },
+    "no-root": {
+      "image": "images/boot-no-root.img",
+      "bytes": 201326592,
+      "sha256": "cbff22c53771cbdea56885be786a63e3e2a354dee1564436314b0ef715f59945",
+      "kernel_su_enabled": false,
+      "kernel_config_sha256": "fdda420d44b83675d6ace735ca7637f8be413ea17943c9bcf6a332d99c175566",
+      "host_checks_pass": true,
+      "runtime_validated": false
+    }
+  },
+  "no_root_new_kernel_abi_regressions": 0,
+  "named_data_layouts_compared": 10673,
+  "no_root_split_btf_parse_limitations": [
+    "fuxi_uah_cpu.ko",
+    "game_opt.ko",
+    "oplus_afs_config.ko",
+    "oplus_bsp_frame_boost.ko",
+    "oplus_bsp_kswapd_opt.ko"
+  ],
+  "runtime_no_root_validated": false,
+  "public_release_ready": false
+}

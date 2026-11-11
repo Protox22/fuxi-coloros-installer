@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-"""Build verified FULL/INSTALLER ZIPs. Never execute adb or fastboot."""
+"""Build verified FULL, INSTALLER and BARE ZIPs. Never execute adb or fastboot."""
 import argparse
 import hashlib
 import json
 from pathlib import Path
 import re
+import runpy
 import stat
-import sys
 import zipfile
 
 PROJECT=Path(__file__).resolve().parent.parent
+PROFILES = {'pkg110': ('installer', 'PKG110'), 'r2187': ('installer-r2187', 'PKG110-R2187')}
 
 
-def build(kind,version,root,out):
+def build(kind,version,root,out, *, profile='pkg110'):
+    source, archive_label = PROFILES[profile]
     if kind not in ('installer', 'full', 'bare'): raise ValueError('Unknown archive kind')
     if (root/'.installer.lock').exists(): raise ValueError('Close the installer first')
     names={}
@@ -27,9 +29,8 @@ def build(kind,version,root,out):
         if path.parts[0] in ('logs', 'backups', 'reports') or name == '.installer.lock': raise ValueError('Private/runtime file in manifest: '+name)
         canonical.add(name.casefold())
         names[name]=expected
-    sys.path.insert(0, str(PROJECT/'installer/scripts'))
-    from payload import REQUIRED
-    for name in (*REQUIRED, 'images/super.img.zst'):
+    required = runpy.run_path(str(PROJECT / source / 'scripts/payload.py'))['REQUIRED']
+    for name in (*required, 'images/super.img.zst'):
         if name not in names: raise ValueError('Required checksum entry missing: '+name)
     omitted=[]
     if kind=='installer':
@@ -38,7 +39,7 @@ def build(kind,version,root,out):
         omitted=[name for name in names if name.startswith(('images/', 'tools/'))]
         names={name:sha for name,sha in names.items() if name not in omitted}
     names['SHA256SUMS.txt']=hashlib.sha256(manifest.read_bytes()).hexdigest()
-    destination=out/f'FUXI-INSTALLER-{version}-PKG110-{kind.upper()}.zip'
+    destination=out/f'FUXI-INSTALLER-{version}-{archive_label}-{kind.upper()}.zip'
     temporary=destination.with_suffix('.pending.zip')
     if destination.exists() or temporary.exists(): raise FileExistsError(str(destination))
     for name in names:
@@ -80,14 +81,17 @@ def build(kind,version,root,out):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--kind',choices=['full','installer','bare','both'],default='both')
+    parser.add_argument('--profile', choices=PROFILES, default='pkg110')
     args=parser.parse_args()
     version=(PROJECT/'VERSION').read_text(encoding='ascii').strip()
     if not re.fullmatch(r'\d+\.\d+\.\d+',version): raise SystemExit('Invalid VERSION')
     out=PROJECT/'releases'; out.mkdir(exist_ok=True)
     kinds=['installer','full'] if args.kind=='both' else [args.kind]
-    records=[build(kind,version,PROJECT/'installer',out) for kind in kinds]
+    source, archive_label = PROFILES[args.profile]
+    records = [build(kind, version, PROJECT / source, out, profile=args.profile) for kind in kinds]
     report_suffix='-bare-build.json' if args.kind=='bare' else '-build.json'
-    (out/f'FUXI-INSTALLER-{version}{report_suffix}').write_text(json.dumps(records,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    report_profile = '' if args.profile == 'pkg110' else f'-{archive_label}'
+    (out/f'FUXI-INSTALLER-{version}{report_profile}{report_suffix}').write_text(json.dumps(records,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     checksums=out/'SHA256SUMS.txt'; existing={}
     if checksums.exists():
         for line in checksums.read_text(encoding='ascii').splitlines():

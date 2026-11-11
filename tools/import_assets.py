@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 import uuid
 
-PROJECT=Path(__file__).resolve().parent.parent
+from build_release import PROFILES, PROJECT
 
 
 def digest(path):
@@ -19,8 +19,10 @@ def digest(path):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source',type=Path)
+    parser.add_argument('--profile', choices=PROFILES, default='pkg110')
+    parser.add_argument('--bare', action='store_true', help='Import Windows tools for a BARE archive')
     args=parser.parse_args()
-    root=PROJECT/'installer'
+    root = PROJECT / PROFILES[args.profile][0]
     if (root/'.installer.lock').exists(): raise SystemExit('Close the installer first.')
     for line in (root/'SHA256SUMS.txt').read_text(encoding='ascii').splitlines():
         match=re.fullmatch(r'([0-9a-f]{64})  \./([A-Za-z0-9_./-]+)',line)
@@ -28,6 +30,8 @@ def main():
         expected,name=match.groups()
         relative=Path(name)
         if relative.is_absolute() or '..' in relative.parts: raise SystemExit('Unsafe path')
+        if args.bare and relative.parts[0] in ('images', 'tools'):
+            continue
         target=root/relative
         if target.is_file():
             if digest(target)!=expected: raise SystemExit('Existing checksum mismatch: '+name)

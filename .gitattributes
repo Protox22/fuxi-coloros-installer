@@ -3,7 +3,9 @@
 *.py text eol=lf
 *.md text eol=lf
 installer/** -text
+installer-r2187/** -text
 installer/*.sh text eol=lf
 installer/scripts/*.sh text eol=lf
 # Upstream license notice is preserved verbatim, including its whitespace.
 installer/bin/platform-tools-windows/NOTICE.txt -whitespace
+installer-r2187/bin/platform-tools-windows/NOTICE.txt -whitespace

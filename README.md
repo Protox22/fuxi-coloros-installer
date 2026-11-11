@@ -4,6 +4,9 @@
 
 ## Запуск
 
+В релизе 2.6.1 есть отдельный [BARE-комплект PKG110 R2187 от 06.11.2026](https://github.com/Protox22/fuxi-coloros-installer/releases/download/v2.6.1/FUXI-INSTALLER-2.6.1-PKG110-R2187-BARE.zip). Он включает встроенный выбор KSU/без root, `super-resize/RESIZE.bat` и расширение `super` со слота B. Для него нужны образы из комплекта R2187 по его `SHA256SUMS.txt`.
+
+
 Чистый установщик без прошивки: [FUXI-INSTALLER-2.6.1-PKG110-BARE.zip](https://github.com/Protox22/fuxi-coloros-installer/releases/tag/v2.6.1) (около 4,7 МБ). В нём мастер и Windows ADB/fastboot/zstd; отсутствуют все образы images/ и TWRP. Сам по себе этот архив не готов к прошивке: сначала добавьте проверенные образы именно PKG110 из соответствующего полного комплекта. Исходный манифест сохранён, проверки целостности не отключаются. В Git находятся исходники, тесты, документация и манифест, без прошивки и бинарных утилит.
 
 Сборка чистого архива: `python tools/build_release.py --kind bare`. После клонирования Git сначала импортируйте Windows-утилиты и остальные компоненты командой `python tools/import_assets.py "/path/to/unpacked/PKG110"`; они останутся локальными и игнорируются Git.
@@ -44,7 +47,8 @@ bash flash.sh --verify-only      # проверка без команд теле
 
 ## Исходники и сборка
 
-- `installer/` — единственный актуальный каталог исходников.
+- `installer/` — установщик для PKG110 от 30.10.2026.
+- `installer-r2187/` — установщик для PKG110 R2187 от 06.11.2026.
 - `tools/` — импорт проверенных компонентов и сборка ZIP.
 - `tests/` — Windows/Bash, пакеты/профили, меню, native-команды, sparse/LP и recovery/GPT без USB и реальных дисков.
 - `docs/VALIDATION.md` — подтверждённые результаты и ограничения.
@@ -57,6 +61,13 @@ bash flash.sh --verify-only      # проверка без команд теле
 ```bash
 python tools/import_assets.py "/path/to/unpacked/PKG110"
 python tools/build_release.py --kind both
+```
+
+Чтобы собрать BARE для R2187, используйте профиль `r2187`:
+
+```bash
+python tools/import_assets.py --profile r2187 --bare "/path/to/unpacked/PKG110-R2187"
+python tools/build_release.py --profile r2187 --kind bare
 ```
 
 Импорт проверяет SHA-256. FULL содержит super.img.zst; INSTALLER — всё остальное. К INSTALLER перед прошивкой нужно добавить соответствующий super. Сборка проверяет CRC/SHA-256 каждого члена ZIP, не вызывает adb/fastboot и пишет только в `releases/`.
