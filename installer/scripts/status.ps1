@@ -13,7 +13,7 @@ function Get-Mutation([string]$Tool, [string[]]$Arguments) {
         $index = [array]::IndexOf($Arguments, 'flash')
         if ($index -ge 0 -and $index + 1 -lt $Arguments.Count) {
             $partition = $Arguments[$index + 1]
-            if ($partition -match '^(super|boot_a|init_boot_a|vendor_boot_a|dtbo_a|recovery_a|vbmeta_a|vbmeta_system_a)$') { return "flash.$partition" }
+            if ($partition -match '^(super|boot_a|init_boot_a|vendor_boot_a|dtbo_a|(recovery|vbmeta|vbmeta_system)_[ab])$') { return "flash.$partition" }
         }
         if ($Arguments[0] -eq 'erase' -and $Arguments[1] -in @('userdata', 'metadata')) { return 'erase.' + $Arguments[1] }
         if ($Arguments[0] -eq 'set_active') { return 'activate.a' }
@@ -75,6 +75,6 @@ function Show-LocalReadiness {
 function Show-FastbootReadiness([string]$Slot, [string]$Unlocked, [string]$Userspace, [string]$Size) {
     $base = $Unlocked -eq 'yes' -and $Userspace -eq 'no'
     $slot = $Slot.TrimStart('_')
-    Write-Readiness 'cleanTechnical' $(if ($base -and (($Size -eq $ExpandedSuper -and $slot -in @('a','b')) -or ($Size -eq $StockSuper -and $slot -eq 'a'))) { 'OK' } else { 'BLOCKED' })
+    Write-Readiness 'cleanTechnical' $(if ($base -and $slot -in @('a','b') -and $Size -in @($StockSuper, $ExpandedSuper)) { 'OK' } else { 'BLOCKED' })
     Write-Readiness 'updateTechnical' $(if ($base -and $Size -eq $ExpandedSuper -and $slot -eq 'a') { 'OK' } else { 'BLOCKED' })
 }

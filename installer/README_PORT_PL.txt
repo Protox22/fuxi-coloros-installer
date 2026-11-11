@@ -1,6 +1,9 @@
 Paczka testowa Ace5 ColorOS 17 dla Xiaomi 13 (fuxi), R783.
 
-R784: na polecenie użytkownika zmieniono Windows flash.ps1/common.ps1.
+Wersja 2.6.1 obsługuje powiększenie super z 9 do 11 GiB ze slotu A lub B
+przy czystej instalacji. TWRP i AVB są zapisywane w aktywnym slocie.
+
+R784 (opis historyczny): na polecenie użytkownika zmieniono Windows flash.ps1/common.ps1.
 Instalator Windows akceptuje aktywny slot A lub B przy istniejącym super
 11 GiB. Zapisuje port wyłącznie do A oraz wspólnego super. Dopiero po
 udanym zapisie wszystkich obrazów i erase userdata/metadata ustawia A,
@@ -23,8 +26,8 @@ Wszystkie APK, w tym SystemUI, i ich podpisy pozostały fabryczne.
 Baza wskazana przez dokumentację projektu: OS3.0.306.0.WMCMIXM (Global fuxi).
 Profil paczki ma tę wartość. Stary README_RU.txt pochodzi z oryginalnego
 instalatora; jego starsza nazwa ROM-u i baza 304 nie opisują tego payloadu.
-Wymagania: odblokowany bootloader, slot zgodny z opisem R784 oraz dokładna
-obsługiwana geometria sprawdzana przez istniejący scripts/prepare-super.sh.
+Wymagania: odblokowany bootloader oraz obsługiwana geometria sprawdzana
+przez scripts/prepare-super.sh. Aktualizacja bez kasowania wymaga slotu A.
 
 Instalator w oryginalnej postaci obsługuje super 11 GiB. Ze stockowych 9 GiB
 przewiduje zmianę GPT/super/userdata po swoich potwierdzeniach, a następnie

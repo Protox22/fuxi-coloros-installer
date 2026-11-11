@@ -8,7 +8,7 @@ try {
     Start-Session 'restore'
     Write-Step (Get-Text 'checkingFiles')
     # Restoration does not read or flash super.img.zst. Still verify it if present.
-    Verify-Payload -InstallerOnly:($InstallerOnly -or -not $VerifyOnly)
+    Verify-Payload -InstallerOnly:$InstallerOnly -AllowMissingSuper:(-not $VerifyOnly)
     if ($VerifyOnly) { Write-Host 'Payload verification completed. No device commands were run.'; $script:SessionOutcome = 'finished'; exit 0 }
     Write-Detail 'Xiaomi 13 fuxi: restore the stock 9 GiB super partition boundary.'
     Write-Detail 'This only restores GPT geometry. It does not install stock firmware.'
@@ -25,6 +25,7 @@ try {
     }
     if ($superSize -ne $ExpandedSuper) { Fail "Unsupported physical super size: $superSize" }
     Check-RequiredImages
+    Check-RequiredImages 'a' -ForResize
     Write-Detail 'Userdata will be erased. The current ROM will not be bootable after shrinking super.'
     Write-Detail 'Keep the bootloader unlocked. Prepare the correct official fuxi fastboot ROM before continuing.'
     if ($Compact) {

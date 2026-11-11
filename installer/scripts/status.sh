@@ -10,7 +10,7 @@ mutation_action() {
     fi
     for item in "$@"; do
         case "$previous:$item" in
-            flash:super|flash:boot_a|flash:init_boot_a|flash:vendor_boot_a|flash:dtbo_a|flash:recovery_a|flash:vbmeta_a|flash:vbmeta_system_a) printf 'flash.%s' "$item"; return ;;
+            flash:super|flash:boot_a|flash:init_boot_a|flash:vendor_boot_a|flash:dtbo_a|flash:recovery_[ab]|flash:vbmeta_[ab]|flash:vbmeta_system_[ab]) printf 'flash.%s' "$item"; return ;;
             erase:userdata|erase:metadata) printf 'erase.%s' "$item"; return ;;
             set_active:a) printf 'activate.a'; return ;;
         esac
@@ -55,7 +55,7 @@ show_local_readiness() {
 show_fastboot_readiness() {
     local slot="${1#_}" unlocked="$2" userspace="$3" size="$4" clean=BLOCKED update=BLOCKED
     if [ "$unlocked" = yes ] && [ "$userspace" = no ]; then
-        if { [ "$size" = "$EXPANDED_SUPER" ] && { [ "$slot" = a ] || [ "$slot" = b ]; }; } || { [ "$size" = "$STOCK_SUPER" ] && [ "$slot" = a ]; }; then clean=OK; fi
+        if [[ "$slot" = [ab] && ( "$size" = "$STOCK_SUPER" || "$size" = "$EXPANDED_SUPER" ) ]]; then clean=OK; fi
         if [ "$size" = "$EXPANDED_SUPER" ] && [ "$slot" = a ]; then update=OK; fi
     fi
     readiness cleanTechnical "$clean"

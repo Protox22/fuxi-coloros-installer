@@ -48,8 +48,8 @@ if kind == 'fastboot':
                           'vbmeta-system-too-large': 'vbmeta_system_a'}[case]
                 if args[1] == 'partition-size:' + target:
                     values[args[1]] = '0x10'
-            if case == 'twrp-too-large' and args[1] == 'partition-size:recovery_a':
-                values[args[1]] = '0x40'
+            if case == 'twrp-too-large' and args[1] == 'partition-size:recovery_' + state.get('slot', 'a'):
+                values[args[1]] = '0x20'
         if case == 'duplicate-var':
             print('(bootloader) ' + args[1] + ': ' + values[args[1]], file=sys.stderr)
         if case == 'slot-changed' and state.get('flashed') and args[1] == 'current-slot':

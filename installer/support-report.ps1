@@ -4,7 +4,7 @@ param([switch]$Compact, [ValidateSet('ru','en','pl')][string]$Language='ru')
 $reportCreated = $false
 try {
     # Export only our fixed vocabulary, never transcripts, GPT backups or native output.
-    $pattern = '^(session\.(flash|restore|check-base)|phase\.(verify|device|unpack)|flash\.(super|boot_a|init_boot_a|vendor_boot_a|dtbo_a|recovery_a|vbmeta_a|vbmeta_system_a)|erase\.(userdata|metadata)|activate\.a|gpt\.resize|result|error|ready\.(toolsAvailable|bundlePresent|firmwareHashes|compatibility|diskSpace|cleanTechnical|updateTechnical))\t(started|done|finished|unfinished|failed|cancelled|OK|BLOCKED|UNKNOWN|hintFiles|hintLock|hintSpace|hintSlot|hintTools|hintUsb|hintStopped)$'
+    $pattern = '^(session\.(flash|restore|check-base)|phase\.(verify|device|unpack)|flash\.(super|boot_a|init_boot_a|vendor_boot_a|dtbo_a|(recovery|vbmeta|vbmeta_system)_[ab])|erase\.(userdata|metadata)|activate\.a|gpt\.resize|result|error|ready\.(toolsAvailable|bundlePresent|firmwareHashes|compatibility|diskSpace|cleanTechnical|updateTechnical))\t(started|done|finished|unfinished|failed|cancelled|OK|BLOCKED|UNKNOWN|hintFiles|hintLock|hintSpace|hintSlot|hintTools|hintUsb|hintStopped)$'
     $source = $null
     $logs = Join-Path $Root 'logs'
     if (Test-Path -LiteralPath $logs) {
@@ -29,7 +29,7 @@ try {
         try {
             $content = @{
                 'events.tsv' = ($safe -join "`n") + "`n"
-                'README.txt' = "FUXI installer 2.6.0 - latest structured session`nOnly fixed operation/status codes are included. No serial, local paths, raw logs, firmware or GPT backups.`nUNKNOWN is not readiness approval. done means a command returned success, not verified Android startup.`nAn interrupted started write may be partially applied. Do not resume midway.`n"
+                'README.txt' = "FUXI installer 2.6.1 - latest structured session`nOnly fixed operation/status codes are included. No serial, local paths, raw logs, firmware or GPT backups.`nUNKNOWN is not readiness approval. done means a command returned success, not verified Android startup.`nAn interrupted started write may be partially applied. Do not resume midway.`n"
             }
             foreach ($name in $content.Keys) {
                 $entry = $archive.CreateEntry($name)

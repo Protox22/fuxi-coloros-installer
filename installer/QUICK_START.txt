@@ -1,4 +1,4 @@
-FUXI / COLOROS 2.6 — Xiaomi 13 (fuxi) — Port by tomekcz
+FUXI / COLOROS 2.6.1 — Xiaomi 13 (fuxi) — Port by tomekcz
 
 РУССКИЙ
 1. Полностью распакуйте FULL ZIP в обычную папку. Не запускайте из архиватора.
@@ -10,7 +10,8 @@ FUXI / COLOROS 2.6 — Xiaomi 13 (fuxi) — Port by tomekcz
    Эти пункты не прошивают и не перезагружают телефон.
 4. Сохраните личные файлы на другом устройстве, зарядите телефон.
    Нужны Xiaomi 13 fuxi и заранее разблокированный загрузчик.
-5. Пункт 1 → 1: чистая установка со стиранием данных.
+5. Пункт 1 → 1: чистая установка со стиранием данных. Расширение super
+   с 9 до 11 ГиБ доступно из A или B и требует отдельного подтверждения.
    Пункт 1 → 2: обновление уже установленного совместимого порта,
    того же варианта root. Сохранность и совместимость ОС не гарантируются.
    Нужны super 11 ГиБ и слот A. При 9 ГиБ обновление будет остановлено.
@@ -47,8 +48,10 @@ FUXI / COLOROS 2.6 — Xiaomi 13 (fuxi) — Port by tomekcz
 ENGLISH
 Extract the entire FULL ZIP, run FLASH.bat (Windows) or bash START.sh (Linux).
 3: verify files. 4: read-only phone/base diagnosis. L: choose RU / EN / PL.
-1 → 1: clean install, erases data. 1 → 2: same compatible port/root variant
-update, requires existing 11 GiB super and slot A. Back up files first.
+1 → 1: clean install, erases data. Expanding super from 9 to 11 GiB
+works from slot A or B and requires separate confirmation.
+1 → 2: same compatible port/root variant update, requires existing 11 GiB
+super and slot A. Back up files first.
 Review the plan. y confirms; n, Enter or EOF cancels. Keep USB connected.
 2 is an advanced partition-size restore, NOT a stock ROM installation.
 For Linux install adb, fastboot, zstd, coreutils and configure USB udev rules.
@@ -65,8 +68,10 @@ Confirm Android startup and data accessibility on the phone after reboot.
 POLSKI
 Rozpakuj cały FULL ZIP. Windows: FLASH.bat. Linux: bash START.sh.
 3: sprawdź pliki. 4: diagnostyka telefonu/bazy bez zapisu. L: RU / EN / PL.
-1 → 1: czysta instalacja usuwa dane. 1 → 2: aktualizacja tego samego zgodnego
-portu i wariantu root; wymaga super 11 GiB i slotu A. Zrób kopię plików.
+1 → 1: czysta instalacja usuwa dane. Powiększenie super z 9 do 11 GiB
+jest dostępne w slocie A lub B i wymaga osobnego potwierdzenia.
+1 → 2: aktualizacja zgodnego portu i wariantu root wymaga super 11 GiB
+i slotu A. Zrób kopię plików.
 Sprawdź plan. y potwierdza; n lub Enter anuluje. Nie odłączaj kabla USB.
 2 przywraca rozmiar super, usuwa dane i wymaga później oficjalnego systemu.
 Linux: zainstaluj adb, fastboot, zstd, coreutils oraz reguły USB udev.

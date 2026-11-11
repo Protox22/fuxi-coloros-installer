@@ -40,6 +40,17 @@ def run_case(host, name, *, operation='clean', device='valid', answers='y\ny\n',
             checks += [[x for x in fb if x[:1] == ['erase']] == [['erase', 'userdata'], ['erase', 'metadata']],
                        fb.index(['set_active', 'a']) > fb.index(['erase', 'metadata']),
                        fb.index(['getvar', 'current-slot'], fb.index(['set_active', 'a'])) < fb.index(['reboot'])]
+        if stock and operation == 'clean':
+            resize_writes = writes[:3]
+            checks += [[x[x.index('flash') + 1] for x in resize_writes if 'flash' in x] ==
+                       [f'vbmeta_{slot}', f'vbmeta_system_{slot}', f'recovery_{slot}'],
+                       len(gpt) == 1]
+            pull = next((i for i, c in enumerate(calls) if c[0] == 'adb' and 'pull' in c), -1)
+            resize = next((i for i, c in enumerate(calls) if c[0] == 'adb' and 'FUXI_CONFIRM=' in ' '.join(c)), -1)
+            flash = next(i for i, c in enumerate(calls) if c[0] == 'fastboot' and 'flash' in c and 'super' in c)
+            checks += [0 <= pull < resize < flash]
+    if device == 'twrp-too-large':
+        checks += [f'physical partition size: recovery_{slot}' in output]
     if operation == 'restore': checks += [not reboot, not any('set_active' in x for x in fb)]
     if rc != 0 and device != 'reboot-failed': checks += [not reboot]
     # Temporary sparse image must be cleaned on success, failure and cancellation.
@@ -62,7 +73,8 @@ for host in HOSTS:
     run(host, 'clean-a')
     run(host, 'clean-b', slot='b')
     run(host, 'clean-9g', stock=True)
-    run(host, 'clean-b-9g-refused', stock=True, slot='b', exit=1, no_writes=True)
+    run(host, 'clean-b-9g', stock=True, slot='b')
+    run(host, 'clean-b-small-recovery', stock=True, slot='b', device='twrp-too-large', exit=1, no_writes=True)
     run(host, 'update', operation='update')
     run(host, 'update-9g-refused', operation='update', stock=True, exit=1, no_writes=True)
     run(host, 'update-b-refused', operation='update', slot='b', exit=1, no_writes=True)

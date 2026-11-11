@@ -9,7 +9,7 @@ fi
 case "$LANGUAGE" in ru|en|pl) ;; *) printf 'Use ru, en or pl.\n' >&2; exit 1 ;; esac
 last_result=0
 while true; do
-    printf '\n  FUXI / COLOROS                          v2.6.0\n'
+    printf '\n  FUXI / COLOROS                          v2.6.1\n'
     get_text welcome
     get_text intro
     printf '\n  [1] %s\n  [2] %s\n  [3] %s\n  [4] %s\n  [5] %s\n' \

@@ -58,7 +58,7 @@ get_text() {
         ru:help) value='Инструкция и помощь с подключением' ;;
         ru:hintFiles) value='Распакуйте полный комплект заново или добавьте файл из этой же сборки. Не обходите проверку SHA-256.' ;;
         ru:hintLock) value='Закройте другие окна установщика. После аварии удаляйте .installer.lock только убедившись, что операция уже не идёт.' ;;
-        ru:hintSlot) value='Обновление и переразметка требуют слота A. Не переключайте слот вслепую: сначала подготовьте совместимую базу.' ;;
+        ru:hintSlot) value='Обновление без стирания и возврат штатной разметки требуют слота A. Перед сменой слота проверьте совместимость базы.' ;;
         ru:hintSpace) value='Нужно место для распакованного образа + 1 ГиБ. Освободите диск или укажите другую временную папку (TEMP/TMPDIR).' ;;
         ru:hintStopped) value='Сохраните журнал. При частичной записи не продолжайте с середины и не запускайте восстановление наугад.' ;;
         ru:hintTools) value='Не найдены необходимые программы. Windows: распакуйте весь архив. Linux: adb, fastboot, zstd. Подробности в пункте 5.' ;;
@@ -80,7 +80,7 @@ get_text() {
         ru:noRepeat) value='Если это неизменённый сток, повторная установка базы не нужна.' ;;
         ru:noWrites) value='Команды записи разделов/GPT в этой операции не запускались. Перезагрузка могла выполняться.' ;;
         ru:notBooted) value='Нужен полностью запущенный Android. Из recovery база не подтверждается.' ;;
-        ru:partialVerified) value='Файлы установщика проверены. Прошивка неполная: добавьте подходящий images/super.img.zst.' ;;
+        ru:partialVerified) value='Файлы установщика проверены. Для прошивки нужны подходящие образы и TWRP из списка SHA256SUMS.txt.' ;;
         ru:partialWrites) value='Запись уже начиналась. Последняя команда могла выполниться частично. Не продолжайте с середины.' ;;
         ru:phoneSummary) value='Телефон: fuxi; исходный слот {0}; super {1} ГиБ; запись в A.' ;;
         ru:prepareRecovery) value='Подготовка recovery и копии разметки...' ;;
@@ -92,7 +92,7 @@ get_text() {
         ru:reportHelp) value='Пункт 6 соберёт обезличенный отчёт. Полный журнал остаётся в logs.' ;;
         ru:requiredBase) value='Требуется база {0}, активный слот {1}.' ;;
         ru:resize) value='Изменение размера super...' ;;
-        ru:resizePlan) value='Потребуется расширение super 9 → 11 ГиБ с отдельным подтверждением после копии GPT.' ;;
+        ru:resizePlan) value='Установщик запишет TWRP и AVB в слот {0}. После сохранения копии GPT отдельно подтвердите расширение super с 9 до 11 ГиБ.' ;;
         ru:restore) value='Дополнительно: вернуть super к 9 ГиБ (стирание)' ;;
         ru:restoreDone) value='Готово: super 9 ГиБ. Телефон оставлен в fastboot.' ;;
         ru:restoreIncomplete) value='Восстановление не завершено. Этапы, требующие восстановления: {0}. Автоматического стирания или продолжения нет. Сохраните копии GPT и установите правильную официальную прошивку fuxi перед загрузкой Android. Состояние: {1}.' ;;
@@ -170,7 +170,7 @@ get_text() {
         en:help) value='Instructions and connection help' ;;
         en:hintFiles) value='Extract the full bundle again or add the file from this same build. Do not bypass SHA-256 checks.' ;;
         en:hintLock) value='Close other installer windows. After a crash, remove .installer.lock only after confirming that no operation is running.' ;;
-        en:hintSlot) value='Update and resizing require slot A. Prepare the compatible base before changing slots.' ;;
+        en:hintSlot) value='Updating without wiping and restoring the stock layout require slot A. Verify the base firmware before changing slots.' ;;
         en:hintSpace) value='Free space is needed for the unpacked image + 1 GiB. Free disk space or select another temporary folder (TEMP/TMPDIR).' ;;
         en:hintStopped) value='Keep the log. After a partial write, do not resume midway or choose restore without checking the cause.' ;;
         en:hintTools) value='Required tools are missing. Windows: extract the entire archive. Linux: adb, fastboot, zstd. See option 5.' ;;
@@ -192,7 +192,7 @@ get_text() {
         en:noRepeat) value='If this is unmodified stock firmware, reinstalling the base is unnecessary.' ;;
         en:noWrites) value='No partition/GPT write commands were started in this operation. A reboot may have occurred.' ;;
         en:notBooted) value='Android must be fully started. Recovery cannot confirm the base.' ;;
-        en:partialVerified) value='Installer files verified. Firmware is incomplete: add the matching images/super.img.zst.' ;;
+        en:partialVerified) value='Installer files verified. For flashing, use matching firmware images and TWRP listed in SHA256SUMS.txt.' ;;
         en:partialWrites) value='Writing has started. The last command may be partially applied. Do not resume midway.' ;;
         en:phoneSummary) value='Phone: fuxi; starting slot {0}; super {1} GiB; target slot A.' ;;
         en:prepareRecovery) value='Preparing recovery and the partition backup...' ;;
@@ -204,7 +204,7 @@ get_text() {
         en:reportHelp) value='Option 6 creates a privacy-filtered report. The full log stays in logs.' ;;
         en:requiredBase) value='Required base: {0}; active slot: {1}.' ;;
         en:resize) value='Changing the super size...' ;;
-        en:resizePlan) value='Super must be expanded from 9 to 11 GiB, with a separate confirmation after the GPT backup.' ;;
+        en:resizePlan) value='The installer will write TWRP and AVB to slot {0}. After the GPT backup is saved, confirm the expansion from 9 to 11 GiB.' ;;
         en:restore) value='Advanced: restore super to 9 GiB (erase data)' ;;
         en:restoreDone) value='Done: super is 9 GiB. The phone remains in fastboot.' ;;
         en:restoreIncomplete) value='Unfinished restore. Stages requiring recovery: {0}. No automatic erase or resume. Keep GPT backups and install the correct official fuxi firmware before booting Android. State: {1}.' ;;
@@ -282,7 +282,7 @@ get_text() {
         pl:help) value='Instrukcja i pomoc z połączeniem' ;;
         pl:hintFiles) value='Rozpakuj pełny pakiet ponownie lub dodaj plik z tej samej kompilacji. Nie pomijaj SHA-256.' ;;
         pl:hintLock) value='Zamknij inne okna instalatora. Po awarii usuń .installer.lock dopiero po upewnieniu się, że operacja nie trwa.' ;;
-        pl:hintSlot) value='Aktualizacja i zmiana rozmiaru wymagają slotu A. Przygotuj zgodną bazę przed zmianą slotu.' ;;
+        pl:hintSlot) value='Aktualizacja bez kasowania danych i przywrócenie fabrycznego układu wymagają slotu A. Sprawdź zgodność oprogramowania bazowego przed zmianą slotu.' ;;
         pl:hintSpace) value='Potrzebne miejsce: rozpakowany obraz + 1 GiB. Zwolnij dysk lub wybierz inny folder tymczasowy (TEMP/TMPDIR).' ;;
         pl:hintStopped) value='Zachowaj dziennik. Po częściowym zapisie nie kontynuuj od środka ani nie wybieraj przywracania bez sprawdzenia przyczyny.' ;;
         pl:hintTools) value='Brak wymaganych programów. Windows: rozpakuj całe archiwum. Linux: adb, fastboot, zstd. Szczegóły: opcja 5.' ;;
@@ -304,7 +304,7 @@ get_text() {
         pl:noRepeat) value='Jeśli jest to niezmieniony system fabryczny, ponowne wgranie bazy nie jest potrzebne.' ;;
         pl:noWrites) value='W tej operacji nie uruchomiono zapisu partycji/GPT. Restart mógł nastąpić.' ;;
         pl:notBooted) value='Android musi być w pełni uruchomiony. Recovery nie potwierdza bazy.' ;;
-        pl:partialVerified) value='Pliki instalatora sprawdzone. System jest niekompletny: dodaj właściwy images/super.img.zst.' ;;
+        pl:partialVerified) value='Pliki instalatora sprawdzone. Do instalacji użyj zgodnych obrazów systemu i TWRP wymienionych w SHA256SUMS.txt.' ;;
         pl:partialWrites) value='Zapis już rozpoczęto. Ostatnie polecenie mogło wykonać się częściowo. Nie kontynuuj od środka.' ;;
         pl:phoneSummary) value='Telefon: fuxi; początkowy slot {0}; super {1} GiB; zapis do A.' ;;
         pl:prepareRecovery) value='Przygotowanie recovery i kopii tablicy partycji...' ;;
@@ -316,7 +316,7 @@ get_text() {
         pl:reportHelp) value='Opcja 6 tworzy raport bez danych osobowych. Pełny dziennik zostaje w logs.' ;;
         pl:requiredBase) value='Wymagana baza: {0}; aktywny slot: {1}.' ;;
         pl:resize) value='Zmiana rozmiaru super...' ;;
-        pl:resizePlan) value='Wymagane powiększenie super z 9 do 11 GiB, z osobnym potwierdzeniem po kopii GPT.' ;;
+        pl:resizePlan) value='Instalator zapisze TWRP i AVB w slocie {0}. Po zapisaniu kopii GPT potwierdź powiększenie super z 9 do 11 GiB.' ;;
         pl:restore) value='Zaawansowane: przywróć super do 9 GiB (usuwa dane)' ;;
         pl:restoreDone) value='Gotowe: super ma 9 GiB. Telefon pozostaje w fastboot.' ;;
         pl:restoreIncomplete) value='Przywracanie nie zostało ukończone. Etapy wymagające odzyskania: {0}. Bez automatycznego kasowania lub wznawiania. Zachowaj kopie GPT i zainstaluj właściwy oficjalny system fuxi przed uruchomieniem Androida. Stan: {1}.' ;;

@@ -73,7 +73,7 @@ function Read-Confirmation([string]$Detailed, [string]$Short) {
     }
 }
 
-function Verify-Payload([switch]$InstallerOnly, [switch]$DiagnosticsOnly) {
+function Verify-Payload([switch]$InstallerOnly, [switch]$DiagnosticsOnly, [switch]$AllowMissingSuper) {
     Write-Event 'phase.verify' 'started'
     $required = @('scripts/status.ps1', 'scripts/status.sh', 'support-report.ps1', 'support-report.sh', 'FLASH.bat', 'START.sh', 'QUICK_START.txt', 'scripts/menu.ps1', 'scripts/menu.sh', 'scripts/language.ps1', 'scripts/language.sh', 'scripts/process.ps1', 'check-base.ps1', 'check-base.sh', 'flash.ps1', 'flash.sh', 'restore-super.ps1', 'restore-super.sh',
         'scripts/common.ps1', 'scripts/common.sh', 'scripts/builds.ps1', 'scripts/builds.sh', 'scripts/prepare-super.sh', 'images/recovery.img', 'images/super.img.zst',
@@ -103,7 +103,11 @@ function Verify-Payload([switch]$InstallerOnly, [switch]$DiagnosticsOnly) {
         }
         if ($DiagnosticsOnly -and ($relative.StartsWith('images/') -or $relative.StartsWith('tools/'))) { continue }
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-            if ($InstallerOnly -and $relative -eq 'images/super.img.zst') { Write-Detail 'OMITTED  images/super.img.zst (installer-only check)'; continue }
+            if (($InstallerOnly -and ($relative.StartsWith('images/') -or $relative.StartsWith('tools/'))) -or
+                ($AllowMissingSuper -and $relative -eq 'images/super.img.zst')) {
+                Write-Detail "OMITTED  $relative"
+                continue
+            }
             Fail "Required release file is missing: $relative"
         }
         $index++
@@ -241,7 +245,7 @@ function Write-RestoreState([ValidateSet('gpt.restore', 'flash.recovery_a', 'era
             $stream.Write($data, 0, $data.Length)
             $stream.Flush($true)
         } finally { $stream.Dispose() }
-        if (Test-Path -LiteralPath $script:RestoreState) { [IO.File]::Replace($temporary, $script:RestoreState, $null) }
+        if (Test-Path -LiteralPath $script:RestoreState) { [IO.File]::Replace($temporary, $script:RestoreState, [NullString]::Value) }
         else { [IO.File]::Move($temporary, $script:RestoreState) }
     } finally {
         try { if (Test-Path -LiteralPath $temporary) { Remove-Item -LiteralPath $temporary -ErrorAction Stop } }
@@ -278,13 +282,14 @@ function Check-ExtraImages {
     }
 }
 
-function Check-RequiredImages {
+function Check-RequiredImages([ValidateSet('a','b')][string]$Slot = 'a', [switch]$ForResize) {
     foreach ($name in @('recovery', 'vbmeta', 'vbmeta_system')) {
-        $value = (Get-FastbootVar "partition-size:${name}_a") -replace '^0x', ''
-        $size = (Get-Item -LiteralPath "images/$name.img").Length
-        if ($name -eq 'recovery') { $size = [Math]::Max($size, (Get-Item -LiteralPath 'tools/TWRP-FUXI-A17.img').Length) }
+        $partition = "${name}_$Slot"
+        $value = (Get-FastbootVar "partition-size:$partition") -replace '^0x', ''
+        $image = if ($ForResize -and $name -eq 'recovery') { 'tools/TWRP-FUXI-A17.img' } else { "images/$name.img" }
+        $size = (Get-Item -LiteralPath $image).Length
         if ($value -notmatch '^[0-9a-f]{1,16}$' -or [Convert]::ToUInt64($value, 16) -lt $size) {
-            Fail "Required image exceeds the physical partition size: ${name}_a"
+            Fail "Required image exceeds the physical partition size: $partition"
         }
     }
 }
@@ -381,9 +386,10 @@ function Check-Bootloader {
 function Start-ResizeRecovery {
     Write-Step (Get-Text 'prepareRecovery')
     Check-Bootloader
-    [void](Invoke-Fastboot @('--disable-verity', '--disable-verification', 'flash', 'vbmeta_a', 'images/vbmeta.img'))
-    [void](Invoke-Fastboot @('--disable-verity', '--disable-verification', 'flash', 'vbmeta_system_a', 'images/vbmeta_system.img'))
-    [void](Invoke-Fastboot @('flash', 'recovery_a', 'tools/TWRP-FUXI-A17.img'))
+    $slot = $script:CheckedBootSlot
+    [void](Invoke-Fastboot @('--disable-verity', '--disable-verification', 'flash', "vbmeta_$slot", 'images/vbmeta.img'))
+    [void](Invoke-Fastboot @('--disable-verity', '--disable-verification', 'flash', "vbmeta_system_$slot", 'images/vbmeta_system.img'))
+    [void](Invoke-Fastboot @('flash', "recovery_$slot", 'tools/TWRP-FUXI-A17.img'))
     [void](Invoke-Fastboot @('reboot', 'recovery'))
     Wait-Adb
     if (((Invoke-Adb @('shell', 'getprop', 'ro.product.device')) -join '').Trim() -ne 'fuxi') { Fail 'Recovery does not report fuxi.' }

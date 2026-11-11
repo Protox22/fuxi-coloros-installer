@@ -37,7 +37,7 @@ try {
     Write-Step (Get-Text 'checkingFiles')
     Verify-Payload -InstallerOnly:$InstallerOnly
     if ($VerifyOnly) {
-        if (-not (Test-Path -LiteralPath (Join-Path $Images 'super.img.zst'))) { Write-Host (Get-Text 'partialVerified') -ForegroundColor Yellow }
+        if ($InstallerOnly) { Write-Host (Get-Text 'partialVerified') -ForegroundColor Yellow }
         else { Write-Host (Get-Text 'verified') -ForegroundColor Green }
         $script:SessionOutcome = 'finished'
         exit 0
@@ -61,20 +61,18 @@ try {
     Write-Detail "Starting slot: $script:ExpectedBootSlot. Flash target: A."
     $superSize = Get-SuperSize
     if ($superSize -notin @($StockSuper, $ExpandedSuper)) { Fail "Unsupported physical super size: $superSize" }
-    if ($script:ExpectedBootSlot -eq 'b' -and $superSize -eq $StockSuper) {
-        Fail 'Starting from B requires an existing 11 GiB super. The 9 GiB resize path requires A to boot the bundled recovery; no device writes were performed.'
-    }
     if ($Update -and $superSize -ne $ExpandedSuper) {
         Fail 'Update without wiping requires an existing 11 GiB super and slot A. No device writes were performed.'
     }
     Check-ExtraImages
     Check-RequiredImages
+    if ($superSize -eq $StockSuper) { Check-RequiredImages $script:ExpectedBootSlot -ForResize }
     Write-Step (Get-Text 'summary')
     Write-Host (Get-Text 'firmwareLabel' @($FirmwareName))
     $gib = if ($superSize -eq $StockSuper) { 9 } else { 11 }
     Write-Host (Get-Text 'phoneSummary' @($ExpectedBootSlot, $gib))
     if ($Update) { Write-Host (Get-Text 'updateAdvice') -ForegroundColor Yellow }
-    elseif ($superSize -eq $StockSuper) { Write-Host (Get-Text 'resizePlan') -ForegroundColor Yellow }
+    elseif ($superSize -eq $StockSuper) { Write-Host (Get-Text 'resizePlan' @($ExpectedBootSlot.ToUpperInvariant())) -ForegroundColor Yellow }
     $confirmed = if ($Update) {
         Read-Confirmation 'This requires the same already installed compatible ColorOS port. Update while keeping userdata and metadata?' (Get-Text 'confirmUpdate')
     } else { Read-Confirmation (Get-Text 'baseConsent' @($RequiredFirmware)) (Get-Text 'baseConsent' @($RequiredFirmware)) }

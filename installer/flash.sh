@@ -61,7 +61,7 @@ main() {
     step checkingFiles
     verify_payload
     if [ "$VERIFY_ONLY" = 1 ]; then
-        if [ ! -f "$IMAGES/super.img.zst" ]; then get_text partialVerified; else get_text verified; fi
+        if [ "$INSTALLER_ONLY" = 1 ]; then get_text partialVerified; else get_text verified; fi
         return
     fi
     NEED_ZSTD=1
@@ -82,11 +82,11 @@ main() {
     local super_size confirmation
     super_size="$(get_super_size)"
     [ "$super_size" = "$STOCK_SUPER" ] || [ "$super_size" = "$EXPANDED_SUPER" ] || fail "Unsupported physical super size: $super_size"
-    if [ "$EXPECTED_BOOT_SLOT" = b ] && [ "$super_size" = "$STOCK_SUPER" ]; then
-        fail 'Starting from B requires an existing 11 GiB super. The 9 GiB resize path requires A; no device writes were performed.'
-    fi
     check_extra_images
     check_required_images
+    if [ "$UPDATE" = 0 ] && [ "$super_size" = "$STOCK_SUPER" ]; then
+        check_required_images "$EXPECTED_BOOT_SLOT"
+    fi
     step summary
     get_text firmwareLabel "$FIRMWARE_NAME"
     get_text phoneSummary "$EXPECTED_BOOT_SLOT" "$([ "$super_size" = "$STOCK_SUPER" ] && printf 9 || printf 11)"
@@ -95,7 +95,7 @@ main() {
         get_text updateAdvice
         confirm "$(get_text confirmUpdate)" || { get_text cancelled; return 2; }
     else
-        [ "$super_size" != "$STOCK_SUPER" ] || get_text resizePlan
+        [ "$super_size" != "$STOCK_SUPER" ] || get_text resizePlan "${EXPECTED_BOOT_SLOT^^}"
         confirm "$(get_text baseConsent "$REQUIRED_FIRMWARE")" || { get_text cancelled; return 2; }
     fi
     expand_super_image

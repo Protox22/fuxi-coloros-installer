@@ -8,6 +8,7 @@ from host_support import HOSTS, WORK, execute, fixture, sums
 CASES = ('valid', 'empty', 'missing-entry', 'duplicate', 'bad-hash', 'traversal', 'absolute',
          'double-slash', 'trailing-slash', 'tampered-helper', 'tampered-image', 'missing-dll',
          'missing-super', 'partial-ok', 'partial-bad-super', 'partial-without-entry',
+         'partial-bare', 'partial-bare-bad-image', 'partial-bare-missing-entry', 'bare-full-refused',
          'lock', 'bad-geometry', 'zero-size', 'negative-size', 'large-size', 'invalid-hash', 'duplicate-key',
          'missing-key', 'unknown-key', 'malicious-name', 'duplicate-extra', 'unknown-extra', 'trailing-comma',
          'uppercase-key', 'missing-extra', 'extra-without-entry', 'conflicting-modes', 'installer-only-invalid', 'unknown-option')
@@ -19,7 +20,7 @@ def run(host, entry, case):
     manifest = root / 'SHA256SUMS.txt'
     original = manifest.read_text()
     options = ['-VerifyOnly'] if host == 'windows' else ['--verify-only']
-    expected = 0 if case in ('valid', 'partial-ok') else 1
+    expected = 0 if case in ('valid', 'partial-ok', 'partial-bare') else 1
     if case == 'empty': manifest.write_text('')
     if case == 'missing-entry': manifest.write_text(''.join(x for x in original.splitlines(True) if not x.endswith('./scripts/prepare-super.sh\n')))
     if case == 'duplicate': manifest.write_text(original + original.splitlines(True)[0])
@@ -35,6 +36,16 @@ def run(host, entry, case):
     if case in ('missing-super', 'partial-ok', 'partial-without-entry'): (root / 'images/super.img.zst').unlink()
     if case.startswith('partial-'):
         options += ['-InstallerOnly'] if host == 'windows' else ['--installer-only']
+    if case.startswith('partial-bare') or case == 'bare-full-refused':
+        for folder in ('images', 'tools'):
+            for file in (root / folder).iterdir():
+                if case != 'partial-bare-bad-image' or file.name != 'recovery.img':
+                    file.unlink()
+        if case == 'partial-bare-bad-image':
+            (root / 'images/recovery.img').write_bytes(b'bad')
+        if case == 'partial-bare-missing-entry':
+            manifest.write_text(''.join(line for line in original.splitlines(True)
+                                        if not line.endswith('./images/recovery.img\n')))
     if case == 'partial-bad-super': (root / 'images/super.img.zst').write_bytes(b'bad')
     if case == 'partial-without-entry': manifest.write_text(''.join(x for x in original.splitlines(True) if not x.endswith('./images/super.img.zst\n')))
     if case == 'lock': (root / '.installer.lock').write_text('other-owner')

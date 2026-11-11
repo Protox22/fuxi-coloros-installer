@@ -25,7 +25,7 @@ def main():
     for name in set(entries) | set(NEW):
         # Explicitly excludes firmware.conf, all binary assets and vendor notices.
         editable = (name.endswith(('.ps1', '.sh', '.py', '.bat')) or
-                    name in ('README_RU.txt', 'BUILDS_RU.txt', 'QUICK_START.txt'))
+                    name in ('README_RU.txt', 'README_PORT_PL.txt', 'BUILDS_RU.txt', 'QUICK_START.txt'))
         if editable:
             entries[name] = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
     manifest.write_text(''.join(entries[n] + '  ./' + n + '\n' for n in sorted(entries)), encoding='ascii')

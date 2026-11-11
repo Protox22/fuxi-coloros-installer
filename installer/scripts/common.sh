@@ -72,7 +72,7 @@ confirm() {
 
 verify_payload() {
     record_event phase.verify started
-    local line expected relative actual component prefix count=0 total seen=$'\n' canonical_seen=$'\n' canonical
+    local allow_missing_super="${1:-0}" line expected relative actual component prefix count=0 total seen=$'\n' canonical_seen=$'\n' canonical
     [ -f "$ROOT/SHA256SUMS.txt" ] || fail 'SHA256SUMS.txt is missing.'
     total="$(awk 'END {print NR}' "$ROOT/SHA256SUMS.txt")"
     while IFS= read -r line || [ -n "$line" ]; do
@@ -96,8 +96,9 @@ verify_payload() {
             case "$relative" in images/*|tools/*|bin/*) continue ;; esac
         fi
         if [ ! -f "$ROOT/$relative" ]; then
-            if [ "${INSTALLER_ONLY:-0}" = 1 ] && [ "$relative" = images/super.img.zst ]; then
-                printf 'OMITTED  images/super.img.zst (installer-only check)\n'
+            if [[ ( "${INSTALLER_ONLY:-0}" = 1 && ( "$relative" = images/* || "$relative" = tools/* ) ) ||
+                  ( "$allow_missing_super" = 1 && "$relative" = images/super.img.zst ) ]]; then
+                printf 'OMITTED  %s\n' "$relative"
                 continue
             fi
             fail "Required release file is missing: $relative"
@@ -273,17 +274,19 @@ check_extra_images() {
 }
 
 check_required_images() {
-    local name value size twrp_size
+    local resize_slot="${1:-}" slot="${1:-a}" name partition value size image
     for name in recovery vbmeta vbmeta_system; do
-        value="$(get_fastboot_var "partition-size:${name}_a")" || return 1
+        partition="${name}_$slot"
+        value="$(get_fastboot_var "partition-size:$partition")" || return 1
         value="${value#0x}"
-        [[ "$value" =~ ^[0-9a-f]{1,16}$ ]] || fail "Invalid partition size: ${name}_a"
-        size="$(wc -c < "$IMAGES/$name.img")"
-        if [ "$name" = recovery ]; then
-            twrp_size="$(wc -c < "$TOOLS/TWRP-FUXI-A17.img")"
-            [ "$size" -ge "$twrp_size" ] || size="$twrp_size"
+        [[ "$value" =~ ^[0-9a-f]{1,16}$ ]] || fail "Invalid partition size: $partition"
+        if [ -n "$resize_slot" ] && [ "$name" = recovery ]; then
+            image="$TOOLS/TWRP-FUXI-A17.img"
+        else
+            image="$IMAGES/$name.img"
         fi
-        [ "$((16#$value))" -ge "$size" ] || fail "Required image exceeds the physical partition size: ${name}_a"
+        size="$(wc -c < "$image")"
+        [ "$((16#$value))" -ge "$size" ] || fail "Required image exceeds the physical partition size: $partition"
     done
 }
 
@@ -424,9 +427,10 @@ get_adb_devices() {
 
 start_resize_recovery() {
     check_bootloader
-    invoke_fastboot --disable-verity --disable-verification flash vbmeta_a "$IMAGES/vbmeta.img"
-    invoke_fastboot --disable-verity --disable-verification flash vbmeta_system_a "$IMAGES/vbmeta_system.img"
-    invoke_fastboot flash recovery_a "$TOOLS/TWRP-FUXI-A17.img"
+    local slot="$CHECKED_BOOT_SLOT"
+    invoke_fastboot --disable-verity --disable-verification flash "vbmeta_$slot" "$IMAGES/vbmeta.img"
+    invoke_fastboot --disable-verity --disable-verification flash "vbmeta_system_$slot" "$IMAGES/vbmeta_system.img"
+    invoke_fastboot flash "recovery_$slot" "$TOOLS/TWRP-FUXI-A17.img"
     invoke_fastboot reboot recovery
     wait_adb
     local product twrp remote backup

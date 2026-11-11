@@ -28,10 +28,10 @@ cleanup_report() {
 trap cleanup_report EXIT
 awk -F '\t' '
     { sub(/\r$/, "") }
-    NF==2 && $1 ~ /^(session\.(flash|restore|check-base)|phase\.(verify|device|unpack)|flash\.(super|boot_a|init_boot_a|vendor_boot_a|dtbo_a|recovery_a|vbmeta_a|vbmeta_system_a)|erase\.(userdata|metadata)|activate\.a|gpt\.resize|result|error|ready\.(toolsAvailable|bundlePresent|firmwareHashes|compatibility|diskSpace|cleanTechnical|updateTechnical))$/ &&
+    NF==2 && $1 ~ /^(session\.(flash|restore|check-base)|phase\.(verify|device|unpack)|flash\.(super|boot_a|init_boot_a|vendor_boot_a|dtbo_a|(recovery|vbmeta|vbmeta_system)_[ab])|erase\.(userdata|metadata)|activate\.a|gpt\.resize|result|error|ready\.(toolsAvailable|bundlePresent|firmwareHashes|compatibility|diskSpace|cleanTechnical|updateTechnical))$/ &&
     $2 ~ /^(started|done|finished|unfinished|failed|cancelled|OK|BLOCKED|UNKNOWN|hintFiles|hintLock|hintSpace|hintSlot|hintTools|hintUsb|hintStopped)$/ {print}
 ' "$source_file" > "$stage/events.tsv"
-printf '%s\n' 'FUXI installer 2.6.0 - latest structured session' \
+printf '%s\n' 'FUXI installer 2.6.1 - latest structured session' \
     'Only fixed operation/status codes are included. No serial, paths, raw logs, firmware or GPT backups.' \
     'UNKNOWN is not readiness approval. done means command success, not Android startup.' \
     'An interrupted started write may be partially applied. Do not resume midway.' > "$stage/README.txt"

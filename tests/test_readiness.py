@@ -39,7 +39,9 @@ def run(host, case):
     if host=='windows': options+=['-Language','en']
     answers='n\n' if case=='cancel' else 'y\nn\n' if case=='cancel-gpt' else 'y\ny\n'
     rc,output,calls=execute(host,root,directory,case=device,entry=entry,options=options,answers=answers,
-                           slot='b' if case=='slot-b' else 'a', size='0x240000000' if case in ('stock','gpt-failed','cancel-gpt','restore-noop') else '0x2c0000000',adb_mode=case=='base-success')
+                           slot='b' if case in ('slot-b','cancel-gpt') else 'a',
+                           size='0x240000000' if case in ('slot-b','stock','gpt-failed','cancel-gpt','restore-noop') else '0x2c0000000',
+                           adb_mode=case=='base-success')
     traces=list((root/'logs').glob('*.events.tsv')); trace=traces[-1].read_text() if traces else ''
     expected=1 if case in ('bad-tool','wrong-phone','no-phone','write-failed','erase-failed','gpt-failed','cancel-gpt','verify-corrupt') else 2 if case=='cancel' else 0
     okay=rc==expected and not (root/'.installer.lock').exists()
@@ -52,7 +54,11 @@ def run(host, case):
     if case in ('stock','slot-b','locked','fastbootd'): okay &= 'ready.updateTechnical\tBLOCKED' in trace
     if case=='write-failed': okay &= 'flash.super\tstarted' in trace and 'flash.super\tdone' not in trace and 'result\tfailed' in trace
     if case=='gpt-failed': okay &= 'gpt.resize\tstarted' in trace and 'gpt.resize\tdone' not in trace
-    if case=='cancel-gpt': okay &= 'flash.recovery_a\tdone' in trace and 'gpt.resize\tstarted' not in trace
+    if case=='slot-b': okay &= 'ready.cleanTechnical\tOK' in trace
+    if case=='cancel-gpt':
+        okay &= 'gpt.resize\tstarted' not in trace and 'flash.super' not in trace
+        okay &= all(f'flash.{name}_b\tdone' in trace for name in ('recovery', 'vbmeta', 'vbmeta_system'))
+        okay &= 'No partition/GPT write commands' not in output
     if case=='cancel': okay &= 'result\tcancelled' in trace and 'flash.super' not in trace
     if case=='verify-corrupt' or case=='bad-tool': okay &= not calls
     if case=='restore-noop': okay &= 'flash.recovery_a' not in trace and 'gpt.resize' not in trace
@@ -62,7 +68,7 @@ def run(host, case):
     if traces:
         with traces[-1].open('a') as stream:
             stream.write('SECRET-SERIAL-123\tPRIVATE-PATH\nflash.super\tSECRET-SERIAL-123\nready.compatibility\tUNKNOWN\n')
-        (root/'logs/private.log').write_text('SECRET-SERIAL-123 '+str(root))
+        (root/'logs/private.log').write_text('SECRET-SERIAL-123 '+str(root), encoding='utf-8')
         env,callfile=environment(directory)
         if host=='bash' and os.name=='nt': env['PATH']=str(TOOLS)+os.pathsep+env['PATH']
         p=subprocess.run(command(host,root,'support-report'),env=env,input=b'',capture_output=True,timeout=40)
@@ -73,6 +79,8 @@ def run(host, case):
             with zipfile.ZipFile(reports[0]) as z:
                 text=''.join(z.read(n).decode('utf-8-sig') for n in z.namelist())
                 okay &= set(z.namelist())=={'events.tsv','README.txt'} and 'SECRET-SERIAL-123' not in text and str(root) not in text
+                if case=='cancel-gpt':
+                    okay &= all(f'flash.{name}_b\tdone' in text for name in ('recovery', 'vbmeta', 'vbmeta_system'))
         if p.returncode: print((p.stdout+p.stderr).decode(errors='replace'))
     record=dict(host=host,case=case,ok=bool(okay),exit=rc)
     print(json.dumps(record),flush=True)

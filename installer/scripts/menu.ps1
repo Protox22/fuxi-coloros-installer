@@ -13,7 +13,7 @@ $lastResult = 0
 try {
     :menu while ($true) {
         Write-Host ''
-        Write-Host '  FUXI / COLOROS                          v2.6.0' -ForegroundColor Cyan
+        Write-Host '  FUXI / COLOROS                          v2.6.1' -ForegroundColor Cyan
         Write-Host ('  ' + (Get-Text 'welcome'))
         Write-Host ('  ' + (Get-Text 'intro')) -ForegroundColor Gray
         Write-Host ''

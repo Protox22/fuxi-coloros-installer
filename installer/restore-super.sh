@@ -17,10 +17,10 @@ main() {
     [ "$INSTALLER_ONLY" = 0 ] || [ "$verify_only" = 1 ] || fail '--installer-only requires --verify-only.'
     start_session restore
     # Restoration does not read or flash super.img.zst. Still verify it if present.
-    if [ "$verify_only" = 0 ]; then INSTALLER_ONLY=1; fi
-    verify_payload
+    local allow_missing_super=$((1 - verify_only))
+    verify_payload "$allow_missing_super"
     if [ "$verify_only" = 1 ]; then
-        if [ -f "$IMAGES/super.img.zst" ]; then get_text verified; else get_text partialVerified; fi
+        if [ "$INSTALLER_ONLY" = 1 ]; then get_text partialVerified; else get_text verified; fi
         return
     fi
     find_tools
@@ -36,6 +36,7 @@ main() {
     fi
     [ "$super_size" = "$EXPANDED_SUPER" ] || fail "Unsupported physical super size: $super_size"
     check_required_images
+    check_required_images a
     get_text eraseCurrent
     get_text prepareStock
     confirm "$(get_text confirmRestore)" || { get_text cancelled; return 2; }
